@@ -4,7 +4,7 @@ import jax.numpy as jnp
 # Physical constants
 DEFAULT_TX_POWER = 16.0206  # (dBm) https://www.nsnam.org/docs/release/3.40/doxygen/d0/d7d/wifi-phy_8cc_source.html#l00171
 MAX_TX_POWER = 20.          # (dBm)
-MIN_TX_POWER = 0.           # (dBm)
+MIN_TX_POWER = 10.          # (dBm)
 NOISE_FLOOR = -93.97        # (dBm) https://www.nsnam.org/docs/models/html/wifi-testing.html#packet-error-rate-performance
 NOISE_FLOOR_LIN = jnp.power(10, NOISE_FLOOR / 10)  # (mW)
 
