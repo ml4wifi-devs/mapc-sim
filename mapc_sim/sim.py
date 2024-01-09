@@ -62,10 +62,10 @@ def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power:
     sinr = (sinr * tx).sum(axis=0)
 
     sdist = tfd.Normal(loc=MEAN_SNRS[mcs], scale=2.)
+    logit_success_prob = (sdist.log_cdf(sinr) - sdist.log_survival_function(sinr)) * (sinr > 0)
 
-    logit_success_probability = (sdist.log_cdf(sinr)-sdist.log_survival_function(sinr) )* (sinr > 0)
     n = jnp.round(DATA_RATES[mcs] * 1e6 * TAU / FRAME_LEN)
-    frames_transmitted = tfd.Binomial(total_count=n, logits=logit_success_probability).sample(seed=binomial_key)
+    frames_transmitted = tfd.Binomial(total_count=n, logits=logit_success_prob).sample(seed=binomial_key)
 
     average_data_rate = FRAME_LEN * (frames_transmitted / TAU)
     return average_data_rate.sum() / float(1e6)  # (Mbps)
