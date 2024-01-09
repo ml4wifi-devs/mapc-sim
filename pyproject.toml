@@ -21,6 +21,7 @@ dependencies = [
   "jax~=0.4.23",
   "jaxlib~=0.4.23",
   "jraph~=0.0.6.dev0",
+  "matplotlib~=3.8.2",
   "tensorflow-probability[jax]~=0.23.0"
 ]
 
