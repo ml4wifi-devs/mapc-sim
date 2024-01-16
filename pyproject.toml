@@ -1,6 +1,6 @@
 [project]
 name = "mapc_sim"
-version = "0.1.1"
+version = "0.1.2"
 description = "IEEE 802.11 MAPC (c-SR) simulator"
 
 readme = "README.md"
