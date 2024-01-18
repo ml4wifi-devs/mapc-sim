@@ -1,4 +1,4 @@
-# IEEE 802.11 MAPC (c-SR) Simulator
+# IEEE 802.11 MAPC Coordinated Spatial Reuse (C-SR) Simulator
 
 `mapc-sim` is a simulation tool for IEEE 802.11 Multi-Access Point Coordination (MAPC) scenarios with coordinated 
 spatial reuse (C-SR). It provides a framework for modeling and analyzing the performance of wireless networks under 
@@ -8,19 +8,19 @@ various configurations and environmental conditions. A detailed description can 
 
 ## Features
 
-- **Simulation of C-SR network**: Simulate the behavior of nodes in a C-SR network, including the effects of hidden 
+- **Simulation of C-SR**: You can simulate the C-SR performance of an 802.11 network, including the effects of hidden 
 nodes, variable transmission power, node positions, and modulation and coding schemes (MCS). Calculate the aggregated 
 effective data rate.
-- **TGax channel model**: Incorporate the TGax channel model for realistic simulation in enterprise scenarios. The 
-simulator also supports the effects of walls attenuation and random noise in the environment.
+- **TGax channel model**: The simulator incorporates the TGax channel model for realistic simulation in enterprise scenarios. The 
+simulator also supports the effects of wall attenuation and random noise in the environment.
 
 ## Repository Structure
 
 The repository is structured as follows:
 
-- `mapc_sim/`: The main package containing the simulator.
+- `mapc_sim/`: Main package containing the simulator.
   - `constants.py`: Physical and MAC layer constants used in the simulator.
-  - `sim.py`: The main simulator functionality.
+  - `sim.py`: Main simulator code.
   - `utils.py`: Utility functions, including the TGax channel model.
 - `test/`: Unit tests and benchmarking scripts.
 
@@ -56,7 +56,7 @@ Run the unit tests to ensure everything is working correctly:
 python -m unittest
 ```
 
-You can benchmark the performance of the simulator using the script in `test/sim_benchmark.py`.
+You can benchmark the performance of the simulator using `test/sim_benchmark.py`.
 
 ## Additional Notes
 
