@@ -17,8 +17,11 @@ def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power:
     a transmission is a Binomial random variable with success probability depending on the SINR and
     number of trials equal to the number of frames in the slot. SINR is calculated as the difference
     between the signal power and the interference level. Interference level is calculated as the sum
-    of the signal powers of all interfering nodes and the noise floor in the linear scale. **Attention:**
-    This simulation does not support multiple simultaneous transmissions to the same node.
+    of the signal powers of all interfering nodes and the noise floor in the linear scale.
+
+    .. important::
+
+        This simulation does not support multiple simultaneous transmissions to the same node.
 
     Parameters
     ----------

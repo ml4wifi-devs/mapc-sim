@@ -32,7 +32,7 @@ def tgax_path_loss(distance: Array, walls: Array) -> Array:
 
 def logsumexp_db(a: Array, b: Array) -> Array:
     r"""
-    Computes :ref:`jax.nn.logsumexp` for dB i.e. :math:`10 * log_10(\sum_i b_i 10^{a_i/10})`
+    Computes :func:`jax.nn.logsumexp` for dB i.e. :math:`10 * \log_{10}(\sum_i b_i 10^{a_i/10})`
 
     This function is equivalent to
 
@@ -46,14 +46,14 @@ def logsumexp_db(a: Array, b: Array) -> Array:
     Parameters
     ----------
     a: Array
-        Parameters are the same as for :ref:`jax.nn.logsumexp`
+        Parameters are the same as for :func:`jax.nn.logsumexp`
     b: Array
-        Parameters are the same as for :ref:`jax.nn.logsumexp`
+        Parameters are the same as for :func:`jax.nn.logsumexp`
 
     Returns
     -------
     Array
-        `logsumexp` for dB
+        ``logsumexp`` for dB
     """
 
     LOG10DIV10 = jnp.log(10.) / 10.
