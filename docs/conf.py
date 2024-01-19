@@ -43,6 +43,7 @@ source_suffix = ['.rst', '.md', '.ipynb']
 
 # Don't show class signature with the class' name.
 autodoc_class_signature = "separated"
+autodoc_typehints = 'none'
 
 
 html_theme_options = {
