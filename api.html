@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Sim &#8212; mapc_sim  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=1fe5e9f7" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="IEEE 802.11 MAPC Coordinated Spatial Reuse (C-SR) Simulator" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="sim">
+<h1>Sim<a class="headerlink" href="#sim" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="mapc_sim.sim.network_data_rate">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.sim.</span></span><span class="sig-name descname"><span class="pre">network_data_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx_power</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></span><a class="headerlink" href="#mapc_sim.sim.network_data_rate" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates the aggregated effective data rate based on the nodes’ positions, MCS, and tx power.
+Channel is modeled using TGax channel model with additive white Gaussian noise. Effective
+data rate is calculated as the sum of data rates of all successful transmissions. Success of
+a transmission is a Binomial random variable with success probability depending on the SINR and
+number of trials equal to the number of frames in the slot. SINR is calculated as the difference
+between the signal power and the interference level. Interference level is calculated as the sum
+of the signal powers of all interfering nodes and the noise floor in the linear scale.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This simulation does not support multiple simultaneous transmissions to the same node.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">PRNGKey</span></code>) – JAX random number generator key.</p></li>
+<li><p><strong>tx</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Two dimensional array of booleans indicating whether a node is transmitting to another node.
+If node i is transmitting to node j, then tx[i, j] = 1, otherwise tx[i, j] = 0.</p></li>
+<li><p><strong>pos</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Two dimensional array of node positions. Each row corresponds to X and Y coordinates of a node.</p></li>
+<li><p><strong>mcs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Modulation and coding scheme of the nodes. Each entry corresponds to a node.</p></li>
+<li><p><strong>tx_power</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Transmission power of the nodes. Each entry corresponds to a node.</p></li>
+<li><p><strong>sigma</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Scalar</span></code>) – Standard deviation of the additive white Gaussian noise.</p></li>
+<li><p><strong>walls</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Adjacency matrix of walls. Each entry corresponds to a node.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Aggregated effective data rate in Mb/s.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Scalar</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-mapc_sim.utils">
+<span id="utils"></span><span id="module-mapc_sim"></span><h1>Utils<a class="headerlink" href="#module-mapc_sim.utils" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="mapc_sim.utils.logsumexp_db">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.utils.</span></span><span class="sig-name descname"><span class="pre">logsumexp_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></span><a class="headerlink" href="#mapc_sim.utils.logsumexp_db" title="Link to this definition">¶</a></dt>
+<dd><p>Computes <code class="xref py py-func docutils literal notranslate"><span class="pre">jax.nn.logsumexp()</span></code> for dB i.e. <span class="math notranslate nohighlight">\(10 * \log_{10}(\sum_i b_i 10^{a_i/10})\)</span></p>
+<p>This function is equivalent to</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">interference_lin</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">a</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">interference_lin</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">interference_lin</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">interference</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">interference_lin</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Parameters are the same as for <code class="xref py py-func docutils literal notranslate"><span class="pre">jax.nn.logsumexp()</span></code></p></li>
+<li><p><strong>b</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Parameters are the same as for <code class="xref py py-func docutils literal notranslate"><span class="pre">jax.nn.logsumexp()</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">logsumexp</span></code> for dB</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mapc_sim.utils.tgax_path_loss">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.utils.</span></span><span class="sig-name descname"><span class="pre">tgax_path_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></span><a class="headerlink" href="#mapc_sim.utils.tgax_path_loss" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates the path loss according to the TGax channel model <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distance</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Distance between nodes</p></li>
+<li><p><strong>walls</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Adjacency matrix describing walls between nodes (1 if there is a wall, 0 otherwise).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path loss in dB</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://www.ieee802.org/11/Reports/tgax_update.htm#:~:text=TGax%20Selection%20Procedure-,11%2D14%2D0980,-TGax%20Simulation%20Scenarios">https://www.ieee802.org/11/Reports/tgax_update.htm#:~:text=TGax%20Selection%20Procedure-,11%2D14%2D0980,-TGax%20Simulation%20Scenarios</a></p>
+</aside>
+</aside>
+</dd></dl>
+
+</section>
+<section id="module-mapc_sim.constants">
+<span id="constants"></span><h1>Constants<a class="headerlink" href="#module-mapc_sim.constants" title="Link to this heading">¶</a></h1>
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.BREAKING_POINT">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">BREAKING_POINT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10.0</span></em><a class="headerlink" href="#mapc_sim.constants.BREAKING_POINT" title="Link to this definition">¶</a></dt>
+<dd><p>TGax channel model (m)
+<a class="reference external" href="https://mentor.ieee.org/802.11/dcn/14/11-14-0980-16-00ax-simulation-scenarios.docx">https://mentor.ieee.org/802.11/dcn/14/11-14-0980-16-00ax-simulation-scenarios.docx</a> (p. 19)</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.CENTRAL_FREQUENCY">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">CENTRAL_FREQUENCY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.16</span></em><a class="headerlink" href="#mapc_sim.constants.CENTRAL_FREQUENCY" title="Link to this definition">¶</a></dt>
+<dd><p>Simulation parameter (GHz)
+<a class="reference external" href="https://en.wikipedia.org/wiki/List_of_WLAN_channels#5_GHz_(802.11a/h/n/ac/ax">https://en.wikipedia.org/wiki/List_of_WLAN_channels#5_GHz_(802.11a/h/n/ac/ax</a>)</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.DATA_RATES">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">DATA_RATES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Array([</span>&#160; <span class="pre">8.6,</span>&#160; <span class="pre">17.2,</span>&#160; <span class="pre">25.8,</span>&#160; <span class="pre">34.4,</span>&#160; <span class="pre">51.6,</span>&#160; <span class="pre">68.8,</span>&#160; <span class="pre">77.4,</span>&#160; <span class="pre">86.</span> <span class="pre">,</span> <span class="pre">103.2,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">114.7,</span> <span class="pre">129.</span> <span class="pre">,</span> <span class="pre">143.2],</span> <span class="pre">dtype=float32)</span></em><a class="headerlink" href="#mapc_sim.constants.DATA_RATES" title="Link to this definition">¶</a></dt>
+<dd><p>Data rates (Mb/s) for IEEE 802.11ax standard, 20 MHz channel width, 1 spatial stream, and 800 ns GI</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.DEFAULT_SIGMA">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_SIGMA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2.0</span></em><a class="headerlink" href="#mapc_sim.constants.DEFAULT_SIGMA" title="Link to this definition">¶</a></dt>
+<dd><p>Simulation parameter
+<a class="reference external" href="https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=908165">https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=908165</a></p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.DEFAULT_TX_POWER">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_TX_POWER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16.0206</span></em><a class="headerlink" href="#mapc_sim.constants.DEFAULT_TX_POWER" title="Link to this definition">¶</a></dt>
+<dd><p>Physical constant (dBm)
+<a class="reference external" href="https://www.nsnam.org/docs/release/3.40/doxygen/d0/d7d/wifi-phy_8cc_source.html#l00171">https://www.nsnam.org/docs/release/3.40/doxygen/d0/d7d/wifi-phy_8cc_source.html#l00171</a></p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.MAX_TX_POWER">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">MAX_TX_POWER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20.0</span></em><a class="headerlink" href="#mapc_sim.constants.MAX_TX_POWER" title="Link to this definition">¶</a></dt>
+<dd><p>Physical constant (dBm)</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.MEAN_SNRS">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">MEAN_SNRS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Array([10.613625,</span> <span class="pre">10.647249,</span> <span class="pre">10.660724,</span> <span class="pre">10.682584,</span> <span class="pre">11.151268,</span> <span class="pre">15.413201,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">16.735813,</span> <span class="pre">18.091175,</span> <span class="pre">21.80629</span> <span class="pre">,</span> <span class="pre">23.331825,</span> <span class="pre">29.788906,</span> <span class="pre">31.750235],</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">dtype=float32)</span></em><a class="headerlink" href="#mapc_sim.constants.MEAN_SNRS" title="Link to this definition">¶</a></dt>
+<dd><p>Parameters of the success probability curves - mean of the normal distribution with standard deviation of 2
+(derived from ns-3 simulations)</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.MIN_TX_POWER">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">MIN_TX_POWER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10.0</span></em><a class="headerlink" href="#mapc_sim.constants.MIN_TX_POWER" title="Link to this definition">¶</a></dt>
+<dd><p>Physical constant (dBm)</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.NOISE_FLOOR">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">NOISE_FLOOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">-93.97</span></em><a class="headerlink" href="#mapc_sim.constants.NOISE_FLOOR" title="Link to this definition">¶</a></dt>
+<dd><p>Physical constant (dBm)
+<a class="reference external" href="https://www.nsnam.org/docs/models/html/wifi-testing.html#packet-error-rate-performance">https://www.nsnam.org/docs/models/html/wifi-testing.html#packet-error-rate-performance</a></p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.REFERENCE_DISTANCE">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">REFERENCE_DISTANCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#mapc_sim.constants.REFERENCE_DISTANCE" title="Link to this definition">¶</a></dt>
+<dd><p>TGax channel model (m)</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.TAU">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">TAU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.005484</span></em><a class="headerlink" href="#mapc_sim.constants.TAU" title="Link to this definition">¶</a></dt>
+<dd><p>Tx slot duration (s)
+<a class="reference external" href="https://ieeexplore.ieee.org/document/8930559">https://ieeexplore.ieee.org/document/8930559</a></p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.WALL_LOSS">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">WALL_LOSS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7.0</span></em><a class="headerlink" href="#mapc_sim.constants.WALL_LOSS" title="Link to this definition">¶</a></dt>
+<dd><p>Simulation parameter (dB)</p>
+</dd></dl>
+
+</section>
+<section id="graph-representation">
+<h1>Graph representation<a class="headerlink" href="#graph-representation" title="Link to this heading">¶</a></h1>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This module is experimental.</p>
+</div>
+<dl class="py class" id="module-mapc_sim.experimental.graph">
+<dt class="sig sig-object py" id="mapc_sim.experimental.graph.Edge">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mapc_sim.experimental.graph.</span></span><span class="sig-name descname"><span class="pre">Edge</span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Edge" title="Link to this definition">¶</a></dt>
+<dd><p>Edge features</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mapc_sim.experimental.graph.Edge.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wall</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transmission</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Edge.__init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mapc_sim.experimental.graph.Node">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mapc_sim.experimental.graph.</span></span><span class="sig-name descname"><span class="pre">Node</span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Node" title="Link to this definition">¶</a></dt>
+<dd><p>Node features</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mapc_sim.experimental.graph.Node.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_ap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx_power</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Node.__init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mapc_sim.experimental.graph.Scenario">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mapc_sim.experimental.graph.</span></span><span class="sig-name descname"><span class="pre">Scenario</span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Scenario" title="Link to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="mapc_sim.experimental.graph.Scenario.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.experimental.graph.Scenario.__init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mapc_sim.experimental.graph.scenario_to_graph_tupple">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.experimental.graph.</span></span><span class="sig-name descname"><span class="pre">scenario_to_graph_tupple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mapc_sim.experimental.graph.Scenario" title="mapc_sim.experimental.graph.Scenario"><span class="pre">Scenario</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GraphsTuple</span></span></span><a class="headerlink" href="#mapc_sim.experimental.graph.scenario_to_graph_tupple" title="Link to this definition">¶</a></dt>
+<dd><p>Converts a Scenario object to a <code class="xref py py-class docutils literal notranslate"><span class="pre">jraph.GraphsTuple</span></code> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scenario</strong> (<a class="reference internal" href="#mapc_sim.experimental.graph.Scenario" title="mapc_sim.experimental.graph.Scenario"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scenario</span></code></a>) – A scenario object.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Graph representation of a scenario</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphsTuple</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mapc_sim.experimental.graph.segment_logsumexp_db">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.experimental.graph.</span></span><span class="sig-name descname"><span class="pre">segment_logsumexp_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segment_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_segments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices_are_sorted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></span><a class="headerlink" href="#mapc_sim.experimental.graph.segment_logsumexp_db" title="Link to this definition">¶</a></dt>
+<dd><p>Computes <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code> for dB, i.e., <span class="math notranslate nohighlight">\(10 * \log_{10}(\sum_i 10^{a_i/10})\)</span></p>
+<p class="rubric">Notes</p>
+<p>Parameters are the same as for <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The segment <cite>logsumexp</cite> in dB</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mapc_sim.experimental.graph.segment_logsumexp_jvp">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.experimental.graph.</span></span><span class="sig-name descname"><span class="pre">segment_logsumexp_jvp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segment_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_segments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices_are_sorted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tangents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool_</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">number</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#mapc_sim.experimental.graph.segment_logsumexp_jvp" title="Link to this definition">¶</a></dt>
+<dd><p>Computes the Jacobian-vector product of <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>segment_ids</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – See also <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code> for details.</p></li>
+<li><p><strong>num_segments</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>, <em>optional</em>) – See also <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code> for details.</p></li>
+<li><p><strong>indices_are_sorted</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>, <em>optional</em>) – See also <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code> for details.</p></li>
+<li><p><strong>unique_indices</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>, <em>optional</em>) – See also <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code> for details.</p></li>
+<li><p><strong>primals</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – The primal arguments of <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code>.</p></li>
+<li><p><strong>tangents</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – The tangent arguments of <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">mapc_sim</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=ml4wifi-devs&repo=mapc-sim&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Sim</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.sim.network_data_rate"><code class="docutils literal notranslate"><span class="pre">network_data_rate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#module-mapc_sim.utils">Utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.utils.logsumexp_db"><code class="docutils literal notranslate"><span class="pre">logsumexp_db()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.utils.tgax_path_loss"><code class="docutils literal notranslate"><span class="pre">tgax_path_loss()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#module-mapc_sim.constants">Constants</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.BREAKING_POINT"><code class="docutils literal notranslate"><span class="pre">BREAKING_POINT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.CENTRAL_FREQUENCY"><code class="docutils literal notranslate"><span class="pre">CENTRAL_FREQUENCY</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.DATA_RATES"><code class="docutils literal notranslate"><span class="pre">DATA_RATES</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.DEFAULT_SIGMA"><code class="docutils literal notranslate"><span class="pre">DEFAULT_SIGMA</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.DEFAULT_TX_POWER"><code class="docutils literal notranslate"><span class="pre">DEFAULT_TX_POWER</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.MAX_TX_POWER"><code class="docutils literal notranslate"><span class="pre">MAX_TX_POWER</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.MEAN_SNRS"><code class="docutils literal notranslate"><span class="pre">MEAN_SNRS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.MIN_TX_POWER"><code class="docutils literal notranslate"><span class="pre">MIN_TX_POWER</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.NOISE_FLOOR"><code class="docutils literal notranslate"><span class="pre">NOISE_FLOOR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.REFERENCE_DISTANCE"><code class="docutils literal notranslate"><span class="pre">REFERENCE_DISTANCE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.TAU"><code class="docutils literal notranslate"><span class="pre">TAU</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.WALL_LOSS"><code class="docutils literal notranslate"><span class="pre">WALL_LOSS</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#graph-representation">Graph representation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.experimental.graph.Edge"><code class="docutils literal notranslate"><span class="pre">Edge</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mapc_sim.experimental.graph.Edge.__init__"><code class="docutils literal notranslate"><span class="pre">Edge.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.experimental.graph.Node"><code class="docutils literal notranslate"><span class="pre">Node</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mapc_sim.experimental.graph.Node.__init__"><code class="docutils literal notranslate"><span class="pre">Node.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.experimental.graph.Scenario"><code class="docutils literal notranslate"><span class="pre">Scenario</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mapc_sim.experimental.graph.Scenario.__init__"><code class="docutils literal notranslate"><span class="pre">Scenario.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.experimental.graph.scenario_to_graph_tupple"><code class="docutils literal notranslate"><span class="pre">scenario_to_graph_tupple()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.experimental.graph.segment_logsumexp_db"><code class="docutils literal notranslate"><span class="pre">segment_logsumexp_db()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.experimental.graph.segment_logsumexp_jvp"><code class="docutils literal notranslate"><span class="pre">segment_logsumexp_jvp()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">IEEE 802.11 MAPC Coordinated Spatial Reuse (C-SR) Simulator</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Maksymilian Wojnar,Wojciech Ciężobka,Katarzyna Kosek-Szott,Krzysztof Rusek,Szymon Szott.
+      
+      |
+      <a href="_sources/api.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/ml4wifi-devs/mapc-sim" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

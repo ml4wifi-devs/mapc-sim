@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>IEEE 802.11 MAPC Coordinated Spatial Reuse (C-SR) Simulator &#8212; mapc_sim  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=1fe5e9f7" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Sim" href="api.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="ieee-802-11-mapc-coordinated-spatial-reuse-c-sr-simulator">
+<h1>IEEE 802.11 MAPC Coordinated Spatial Reuse (C-SR) Simulator<a class="headerlink" href="#ieee-802-11-mapc-coordinated-spatial-reuse-c-sr-simulator" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">mapc-sim</span></code> is a simulation tool for IEEE 802.11 Multi-Access Point
+Coordination (MAPC) scenarios with coordinated spatial reuse (C-SR). It
+provides a framework for modeling and analyzing the performance of
+wireless networks under various configurations and environmental
+conditions. A detailed description can be found in:</p>
+<ul class="simple">
+<li><p>Maksymilian Wojnar, Wojciech Ciezobka, Katarzyna Kosek-Szott,
+Krzysztof Rusek, Szymon Szott, David Nunez, and Boris Bellalta. “IEEE
+802.11bn Multi-AP Coordinated Spatial Reuse with Hierarchical
+Multi-Armed Bandits”, $JOURNAL_NAME_TODO, 2024.
+[<a class="reference external" href="https://github.com/ml4wifi-devs/mapc-mab/tree/main">TODO_PREPRINT_INSERT</a>,
+<a class="reference external" href="https://github.com/ml4wifi-devs/mapc-mab/tree/main">TODO_PUBLICATION_INSERT</a>]</p></li>
+</ul>
+<section id="id1">
+<h2><a class="reference external" href="https://github.com/ml4wifi-devs/mapc-sim">GitHub (ml4wifi-devs/mapc-sim)</a><a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+</section>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Simulation of C-SR</strong>: You can simulate the C-SR performance of an
+802.11 network, including the effects of hidden nodes, variable
+transmission power, node positions, and modulation and coding schemes
+(MCS). Calculate the aggregated effective data rate.</p></li>
+<li><p><strong>TGax channel model</strong>: The simulator incorporates the TGax channel
+model for realistic simulation in enterprise scenarios. The simulator
+also supports the effects of wall attenuation and random noise in the
+environment.</p></li>
+</ul>
+</section>
+<section id="repository-structure">
+<h2>Repository Structure<a class="headerlink" href="#repository-structure" title="Link to this heading">¶</a></h2>
+<p>The repository <a class="reference external" href="https://github.com/ml4wifi-devs/mapc-sim">(ml4wifi-devs/mapc-sim)</a> is structured as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mapc_sim/</span></code>: Main package containing the simulator.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">constants.py</span></code>: Physical and MAC layer constants used in the
+simulator.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sim.py</span></code>: Main simulator code.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">utils.py</span></code>: Utility functions, including the TGax channel model.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test/</span></code>: Unit tests and benchmarking scripts.</p></li>
+</ul>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
+<p>The package can be installed using pip:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>mapc-sim
+</pre></div>
+</div>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<p>The main functionality is provided by the <code class="docutils literal notranslate"><span class="pre">network_data_rate</span></code> function
+in <code class="docutils literal notranslate"><span class="pre">mapc_sim/sim.py</span></code>. This function calculates the effective data rate
+for a given network configuration. Example usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mapc_sim.sim</span> <span class="kn">import</span> <span class="n">network_data_rate</span>
+
+<span class="c1"># Define your network configuration</span>
+<span class="c1"># ...</span>
+
+<span class="n">data_rate</span> <span class="o">=</span> <span class="n">network_data_rate</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">mcs</span><span class="p">,</span> <span class="n">tx_power</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">walls</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For more detailed examples, refer to the test cases in
+<code class="docutils literal notranslate"><span class="pre">test/test_sim.py</span></code>.</p>
+</section>
+<section id="testing-and-benchmarking">
+<h2>Testing and Benchmarking<a class="headerlink" href="#testing-and-benchmarking" title="Link to this heading">¶</a></h2>
+<p>Run the unit tests to ensure everything is working correctly:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>unittest
+</pre></div>
+</div>
+<p>You can benchmark the performance of the simulator using
+<code class="docutils literal notranslate"><span class="pre">test/sim_benchmark.py</span></code>.</p>
+</section>
+<section id="additional-notes">
+<h2>Additional Notes<a class="headerlink" href="#additional-notes" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>The simulator is written in JAX, an autodiff library for Python. It
+may require additional dependencies or configurations to run
+properly, especially with GPU acceleration. For more information on
+JAX, please refer to the official <a class="reference external" href="https://jax.readthedocs.io/en/latest/">JAX
+repository</a>.</p></li>
+</ul>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+</ul>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">mapc_sim</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=ml4wifi-devs&repo=mapc-sim&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Sim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#module-mapc_sim.utils">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#module-mapc_sim.constants">Constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#graph-representation">Graph representation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="api.html" title="next chapter">Sim</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Maksymilian Wojnar,Wojciech Ciężobka,Katarzyna Kosek-Szott,Krzysztof Rusek,Szymon Szott.
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/ml4wifi-devs/mapc-sim" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>
