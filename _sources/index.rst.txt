@@ -14,9 +14,6 @@ conditions. A detailed description can be found in:
    [`TODO_PREPRINT_INSERT <https://github.com/ml4wifi-devs/mapc-mab/tree/main>`__,
    `TODO_PUBLICATION_INSERT <https://github.com/ml4wifi-devs/mapc-mab/tree/main>`__]
 
-`GitHub (ml4wifi-devs/mapc-sim) <https://github.com/ml4wifi-devs/mapc-sim>`_
-----------------------------------------------------------------------------
-
 
 
 Features
