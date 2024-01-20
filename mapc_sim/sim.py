@@ -10,7 +10,7 @@ tfd = tfp.distributions
 
 
 def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power: Array, sigma: Scalar, walls: Array) -> Scalar:
-    """
+    r"""
     Calculates the aggregated effective data rate based on the nodes' positions, MCS, and tx power.
     Channel is modeled using TGax channel model with additive white Gaussian noise. Effective
     data rate is calculated as the sum of data rates of all successful transmissions. Success of
