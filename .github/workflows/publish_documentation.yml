@@ -1,0 +1,33 @@
+name: Publish the documentation
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the branch
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Build the documentation with Sphinx
+        run: |
+          pip install -r docs/requirements.txt
+          sphinx-build -b html docs docs/build/html
+
+      - name: Publish the documentation
+        uses: JamesIves/github-pages-deploy-action@3.6.2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: docs/build/html
+          CLEAN: true

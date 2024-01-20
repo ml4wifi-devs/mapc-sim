@@ -12,6 +12,7 @@ from jraph import segment_max, segment_sum, segment_softmax
 
 @chex.dataclass
 class Node:
+    """Node features"""
     is_ap: Array
     mcs: Array
     pos: Array
@@ -20,6 +21,7 @@ class Node:
 
 @chex.dataclass
 class Edge:
+    """Edge features"""
     wall: Array
     transmission: Array
 
@@ -35,7 +37,7 @@ class Scenario(Protocol):
 
 def scenario_to_graph_tupple(scenario: Scenario) -> jraph.GraphsTuple:
     r"""
-    Converts a Scenario object to a :ref:`GraphsTuple` object.
+    Converts a Scenario object to a :class:`jraph.GraphsTuple` object.
 
     Parameters
     ----------
@@ -93,7 +95,7 @@ def segment_logsumexp(
     x: Array
         An array of to be segmented with logsumexp.
     segment_ids: Array
-        An array with integer dtype that indicates the segments of `data` (along its leading axis) to be maxed over.
+        An array with integer dtype that indicates the segments of ``data`` (along its leading axis) to be maxed over.
         Values can be repeated and need not be sorted. Values outside the range [0, num_segments) are dropped and
         do not contribute to the result.
     num_segments: Array, optional
@@ -131,22 +133,22 @@ def segment_logsumexp_jvp(
         tangents: Array
 ) -> tuple[Array, Array]:
     """
-    Computes the Jacobian-vector product of :ref:`segment_logsumexp`.
+    Computes the Jacobian-vector product of :func:`segment_logsumexp`.
 
     Parameters
     ----------
     segment_ids: Array
-        See also :ref:`segment_logsumexp` for details.
+        See also :func:`segment_logsumexp` for details.
     num_segments: Array, optional
-        See also :ref:`segment_logsumexp` for details.
+        See also :func:`segment_logsumexp` for details.
     indices_are_sorted: Array, optional
-        See also :ref:`segment_logsumexp` for details.
+        See also :func:`segment_logsumexp` for details.
     unique_indices: Array, optional
-        See also :ref:`segment_logsumexp` for details.
+        See also :func:`segment_logsumexp` for details.
     primals: Array
-        The primal arguments of :ref:`segment_logsumexp`.
+        The primal arguments of :func:`segment_logsumexp`.
     tangents: Array
-        The tangent arguments of :ref:`segment_logsumexp`.
+        The tangent arguments of :py:func:`segment_logsumexp`.
     """
 
     x, = primals
@@ -167,11 +169,11 @@ def segment_logsumexp_db(
         unique_indices: bool = False
 ) -> Array:
     r"""
-    Computes :ref:`segment_logsumexp` for dB, i.e., :math:`10 * log_10(\sum_i 10^{a_i/10})`
+    Computes :func:`segment_logsumexp` for dB, i.e., :math:`10 * \log_{10}(\sum_i 10^{a_i/10})`
 
     Notes
     -----
-    Parameters are the same as for :ref:`segment_logsumexp`
+    Parameters are the same as for :func:`segment_logsumexp`
 
     Returns
     -------

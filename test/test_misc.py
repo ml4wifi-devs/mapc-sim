@@ -5,7 +5,7 @@ tfd = tfp.distributions
 
 
 class MiscTestCase(unittest.TestCase):
-    def test_math(self):
+    def test_logit_success_prob(self):
         d = tfd.Normal(10., 2.)
         logits = d.log_cdf(14.) - d.log_survival_function(14.)
         d1 = tfd.Binomial(40, logits=logits)
