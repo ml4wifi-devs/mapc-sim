@@ -132,7 +132,7 @@ If node i is transmitting to node j, then tx[i, j] = 1, otherwise tx[i, j] = 0.<
 <dl class="py data">
 <dt class="sig sig-object py" id="mapc_sim.constants.BREAKING_POINT">
 <span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">BREAKING_POINT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10.0</span></em><a class="headerlink" href="#mapc_sim.constants.BREAKING_POINT" title="Link to this definition">¶</a></dt>
-<dd><p>TGax channel model (m)
+<dd><p>TGax channel model parameter (m)
 <a class="reference external" href="https://mentor.ieee.org/802.11/dcn/14/11-14-0980-16-00ax-simulation-scenarios.docx">https://mentor.ieee.org/802.11/dcn/14/11-14-0980-16-00ax-simulation-scenarios.docx</a> (p. 19)</p>
 </dd></dl>
 
@@ -146,7 +146,7 @@ If node i is transmitting to node j, then tx[i, j] = 1, otherwise tx[i, j] = 0.<
 <dl class="py data">
 <dt class="sig sig-object py" id="mapc_sim.constants.DATA_RATES">
 <span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">DATA_RATES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Array([</span>&#160; <span class="pre">8.6,</span>&#160; <span class="pre">17.2,</span>&#160; <span class="pre">25.8,</span>&#160; <span class="pre">34.4,</span>&#160; <span class="pre">51.6,</span>&#160; <span class="pre">68.8,</span>&#160; <span class="pre">77.4,</span>&#160; <span class="pre">86.</span> <span class="pre">,</span> <span class="pre">103.2,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">114.7,</span> <span class="pre">129.</span> <span class="pre">,</span> <span class="pre">143.2],</span> <span class="pre">dtype=float32)</span></em><a class="headerlink" href="#mapc_sim.constants.DATA_RATES" title="Link to this definition">¶</a></dt>
-<dd><p>Data rates (Mb/s) for IEEE 802.11ax standard, 20 MHz channel width, 1 spatial stream, and 800 ns GI</p>
+<dd><p>Data rates for IEEE 802.11ax standard, 20 MHz channel width, 1 spatial stream, and 800 ns GI (Mb/s)</p>
 </dd></dl>
 
 <dl class="py data">
@@ -164,6 +164,12 @@ If node i is transmitting to node j, then tx[i, j] = 1, otherwise tx[i, j] = 0.<
 </dd></dl>
 
 <dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.FRAME_LEN">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">FRAME_LEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Array(12000,</span> <span class="pre">dtype=int32,</span> <span class="pre">weak_type=True)</span></em><a class="headerlink" href="#mapc_sim.constants.FRAME_LEN" title="Link to this definition">¶</a></dt>
+<dd><p>Frame length (bits)</p>
+</dd></dl>
+
+<dl class="py data">
 <dt class="sig sig-object py" id="mapc_sim.constants.MAX_TX_POWER">
 <span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">MAX_TX_POWER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20.0</span></em><a class="headerlink" href="#mapc_sim.constants.MAX_TX_POWER" title="Link to this definition">¶</a></dt>
 <dd><p>Physical constant (dBm)</p>
@@ -172,7 +178,7 @@ If node i is transmitting to node j, then tx[i, j] = 1, otherwise tx[i, j] = 0.<
 <dl class="py data">
 <dt class="sig sig-object py" id="mapc_sim.constants.MEAN_SNRS">
 <span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">MEAN_SNRS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Array([10.613625,</span> <span class="pre">10.647249,</span> <span class="pre">10.660724,</span> <span class="pre">10.682584,</span> <span class="pre">11.151268,</span> <span class="pre">15.413201,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">16.735813,</span> <span class="pre">18.091175,</span> <span class="pre">21.80629</span> <span class="pre">,</span> <span class="pre">23.331825,</span> <span class="pre">29.788906,</span> <span class="pre">31.750235],</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">dtype=float32)</span></em><a class="headerlink" href="#mapc_sim.constants.MEAN_SNRS" title="Link to this definition">¶</a></dt>
-<dd><p>Parameters of the success probability curves - mean of the normal distribution with standard deviation of 2
+<dd><p>Parameters of the success probability curves - cdf of the normal distribution with standard deviation of 2
 (derived from ns-3 simulations)</p>
 </dd></dl>
 
@@ -192,7 +198,7 @@ If node i is transmitting to node j, then tx[i, j] = 1, otherwise tx[i, j] = 0.<
 <dl class="py data">
 <dt class="sig sig-object py" id="mapc_sim.constants.REFERENCE_DISTANCE">
 <span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">REFERENCE_DISTANCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#mapc_sim.constants.REFERENCE_DISTANCE" title="Link to this definition">¶</a></dt>
-<dd><p>TGax channel model (m)</p>
+<dd><p>TGax channel model parameter (m)</p>
 </dd></dl>
 
 <dl class="py data">
@@ -341,6 +347,7 @@ If node i is transmitting to node j, then tx[i, j] = 1, otherwise tx[i, j] = 0.<
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.DATA_RATES"><code class="docutils literal notranslate"><span class="pre">DATA_RATES</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.DEFAULT_SIGMA"><code class="docutils literal notranslate"><span class="pre">DEFAULT_SIGMA</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.DEFAULT_TX_POWER"><code class="docutils literal notranslate"><span class="pre">DEFAULT_TX_POWER</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.FRAME_LEN"><code class="docutils literal notranslate"><span class="pre">FRAME_LEN</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.MAX_TX_POWER"><code class="docutils literal notranslate"><span class="pre">MAX_TX_POWER</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.MEAN_SNRS"><code class="docutils literal notranslate"><span class="pre">MEAN_SNRS</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.MIN_TX_POWER"><code class="docutils literal notranslate"><span class="pre">MIN_TX_POWER</span></code></a></li>
