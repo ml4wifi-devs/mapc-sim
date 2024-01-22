@@ -9,7 +9,8 @@ from mapc_sim.utils import logsumexp_db, tgax_path_loss
 tfd = tfp.distributions
 
 
-def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power: Array, sigma: Scalar, walls: Array) -> Scalar:
+def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power: Array, sigma: Scalar,
+                      walls: Array, return_sample: bool = False) -> Scalar|tuple:
     r"""
     Calculates the aggregated effective data rate based on the nodes' positions, MCS, and tx power.
     Channel is modeled using TGax channel model with additive white Gaussian noise. Effective
@@ -40,11 +41,15 @@ def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power:
         Standard deviation of the additive white Gaussian noise.
     walls: Array
         Adjacency matrix of walls. Each entry corresponds to a node.
+    return_sample: bool
+        A flag indicating whether the simulator returns raw number of
+        transmitted frames.
 
     Returns
     -------
-    Scalar
-        Aggregated effective data rate in Mb/s.
+    Scalar | tuple
+        Aggregated effective data rate in Mb/s if ``return_sample`` is ``False``.
+        Otherwise, a pair of data rate and the number of transmitted frames.
     """
 
     normal_key, binomial_key = jax.random.split(key)
