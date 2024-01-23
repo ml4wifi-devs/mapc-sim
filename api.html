@@ -36,7 +36,7 @@
 <h1>Sim<a class="headerlink" href="#sim" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="mapc_sim.sim.network_data_rate">
-<span class="sig-prename descclassname"><span class="pre">mapc_sim.sim.</span></span><span class="sig-name descname"><span class="pre">network_data_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx_power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.sim.network_data_rate" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.sim.</span></span><span class="sig-name descname"><span class="pre">network_data_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx_power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.sim.network_data_rate" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates the aggregated effective data rate based on the nodes’ positions, MCS, and tx power.
 Channel is modeled using TGax channel model with additive white Gaussian noise. Effective
 data rate is calculated as the sum of data rates of all successful transmissions. Success of
@@ -59,13 +59,16 @@ If node i is transmitting to node j, then tx[i, j] = 1, otherwise tx[i, j] = 0.<
 <li><p><strong>tx_power</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Transmission power of the nodes. Each entry corresponds to a node.</p></li>
 <li><p><strong>sigma</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Scalar</span></code>) – Standard deviation of the additive white Gaussian noise.</p></li>
 <li><p><strong>walls</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Adjacency matrix of walls. Each entry corresponds to a node.</p></li>
+<li><p><strong>return_sample</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – A flag indicating whether the simulator returns raw number of
+transmitted frames.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Aggregated effective data rate in Mb/s.</p>
+<dd class="field-even"><p>Aggregated effective data rate in Mb/s if <code class="docutils literal notranslate"><span class="pre">return_sample</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>.
+Otherwise, a pair of data rate and the number of transmitted frames.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Scalar</span></code></p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Scalar</span> <span class="pre">|</span> <span class="pre">tuple</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -219,7 +222,11 @@ If node i is transmitting to node j, then tx[i, j] = 1, otherwise tx[i, j] = 0.<
 <h1>Graph representation<a class="headerlink" href="#graph-representation" title="Link to this heading">¶</a></h1>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>This module is experimental.</p>
+<p>This module is experimental and requires <code class="docutils literal notranslate"><span class="pre">jraph</span></code>.
+Install it as:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>mapc-sim<span class="o">[</span>graph<span class="o">]</span>
+</pre></div>
+</div>
 </div>
 <dl class="py class" id="module-mapc_sim.experimental.graph">
 <dt class="sig sig-object py" id="mapc_sim.experimental.graph.Edge">
