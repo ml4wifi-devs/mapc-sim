@@ -1,3 +1,5 @@
+from typing import Union
+
 import jax
 import jax.numpy as jnp
 import tensorflow_probability.substrates.jax as tfp
@@ -9,7 +11,8 @@ from mapc_sim.utils import logsumexp_db, tgax_path_loss
 tfd = tfp.distributions
 
 
-def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power: Array, sigma: Scalar, walls: Array) -> Scalar:
+def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power: Array, sigma: Scalar,
+                      walls: Array, return_sample: bool = False) -> Union[Scalar,tuple]:
     r"""
     Calculates the aggregated effective data rate based on the nodes' positions, MCS, and tx power.
     Channel is modeled using TGax channel model with additive white Gaussian noise. Effective
@@ -40,11 +43,15 @@ def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power:
         Standard deviation of the additive white Gaussian noise.
     walls: Array
         Adjacency matrix of walls. Each entry corresponds to a node.
+    return_sample: bool
+        A flag indicating whether the simulator returns raw number of
+        transmitted frames.
 
     Returns
     -------
-    Scalar
-        Aggregated effective data rate in Mb/s.
+    Scalar | tuple
+        Aggregated effective data rate in Mb/s if ``return_sample`` is ``False``.
+        Otherwise, a pair of data rate and the number of transmitted frames.
     """
 
     normal_key, binomial_key = jax.random.split(key)
@@ -72,4 +79,6 @@ def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power:
     frames_transmitted = tfd.Binomial(total_count=n, logits=logit_success_prob).sample(seed=binomial_key)
 
     average_data_rate = FRAME_LEN * (frames_transmitted / TAU)
+    if return_sample:
+        return (average_data_rate.sum() / float(1e6), frames_transmitted)
     return average_data_rate.sum() / float(1e6)  # (Mbps)

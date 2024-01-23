@@ -27,7 +27,13 @@ Graph representation
 
 .. important::
 
-    This module is experimental.
+    This module is experimental and requires ``jraph``.
+    Install it as:
+
+    .. code-block:: shell
+
+        pip install mapc-sim[graph]
+
 
 .. automodule:: mapc_sim.experimental.graph
     :members:
