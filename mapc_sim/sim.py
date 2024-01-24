@@ -32,20 +32,20 @@ def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power:
         JAX random number generator key.
     tx: Array
         Two dimensional array of booleans indicating whether a node is transmitting to another node.
-        If node i is transmitting to node j, then tx[i, j] = 1, otherwise tx[i, j] = 0.
+        If node i is transmitting to node j, then `tx[i, j] = 1`, otherwise `tx[i, j] = 0`.
     pos: Array
         Two dimensional array of node positions. Each row corresponds to X and Y coordinates of a node.
     mcs: Array
-        Modulation and coding scheme of the nodes. Each entry corresponds to a node.
+        Modulation and coding scheme of the nodes. Each entry corresponds to MCS of the transmitting node.
     tx_power: Array
-        Transmission power of the nodes. Each entry corresponds to a node.
+        Transmission power of the nodes. Each entry corresponds to the transmission power of the transmitting node.
     sigma: Scalar
         Standard deviation of the additive white Gaussian noise.
     walls: Array
-        Adjacency matrix of walls. Each entry corresponds to a node.
+        Adjacency matrix of walls. If node i is separated from node j by a wall,
+        then `walls[i, j] = 1`, otherwise `walls[i, j] = 0`.
     return_sample: bool
-        A flag indicating whether the simulator returns raw number of
-        transmitted frames.
+        A flag indicating whether the simulator returns raw number of transmitted frames.
 
     Returns
     -------
@@ -62,14 +62,14 @@ def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power:
     signal_power = tx_power - tgax_path_loss(distance, walls)
     signal_power = jnp.where(jnp.isinf(signal_power), 0., signal_power)
 
-    interference_matrix = jnp.ones_like(tx) * tx.sum(axis=0) * tx.sum(axis=-1, keepdims=True) * (1 - tx)
+    interference_matrix = jnp.ones_like(tx) * tx.sum(axis=0)[:, None] * tx.sum(axis=1) * (1 - tx.T)
     a = jnp.concatenate([signal_power, jnp.full((1, signal_power.shape[1]), fill_value=NOISE_FLOOR)], axis=0)
     b = jnp.concatenate([interference_matrix, jnp.ones((1, interference_matrix.shape[1]))], axis=0)
     interference = jax.vmap(logsumexp_db, in_axes=(1, 1))(a, b)
 
     sinr = signal_power - interference
     sinr = sinr + tfd.Normal(loc=jnp.zeros_like(signal_power), scale=sigma).sample(seed=normal_key)
-    sinr = (sinr * tx).sum(axis=0)
+    sinr = (sinr * tx.T).sum(axis=0)
 
     sdist = tfd.Normal(loc=MEAN_SNRS[mcs], scale=2.)
     logit_success_prob = sdist.log_cdf(sinr) - sdist.log_survival_function(sinr)
@@ -77,8 +77,9 @@ def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power:
 
     n = jnp.round(DATA_RATES[mcs] * 1e6 * TAU / FRAME_LEN)
     frames_transmitted = tfd.Binomial(total_count=n, logits=logit_success_prob).sample(seed=binomial_key)
-
     average_data_rate = FRAME_LEN * (frames_transmitted / TAU)
+
     if return_sample:
-        return (average_data_rate.sum() / float(1e6), frames_transmitted)
-    return average_data_rate.sum() / float(1e6)  # (Mbps)
+        return average_data_rate.sum() / float(1e6), frames_transmitted
+    else:
+        return average_data_rate.sum() / float(1e6)
