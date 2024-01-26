@@ -57,6 +57,12 @@ transmission power, node positions, and modulation and coding schemes
 model for realistic simulation in enterprise scenarios. The simulator
 also supports the effects of wall attenuation and random noise in the
 environment.</p></li>
+<li><p><strong>JAX JIT compilation</strong>: The simulator is written in JAX, which enables
+just-in-time (JIT) compilation and hardware acceleration.</p></li>
+<li><p><strong>Reproducibility</strong>: The simulator uses JAX’s pseudo random number
+generator (PRNG) to generate random numbers. This ensures that the
+simulator is fully reproducible and you will get the same results for
+the same input parameters.</p></li>
 </ul>
 </section>
 <section id="repository-structure">
@@ -86,16 +92,124 @@ simulator.</p></li>
 <p>The main functionality is provided by the <code class="docutils literal notranslate"><span class="pre">network_data_rate</span></code> function
 in <code class="docutils literal notranslate"><span class="pre">mapc_sim/sim.py</span></code>. This function calculates the effective data rate
 for a given network configuration. Example usage:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mapc_sim.sim</span> <span class="kn">import</span> <span class="n">network_data_rate</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">from</span> <span class="nn">mapc_sim.sim</span> <span class="kn">import</span> <span class="n">network_data_rate</span>
 
-<span class="c1"># Define your network configuration</span>
-<span class="c1"># ...</span>
+<span class="c1"># Random number generator key</span>
+<span class="n">key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 
+<span class="c1"># Transmission matrix - 1 if node i transmits to node j, 0 otherwise</span>
+<span class="n">tx</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">))</span>
+<span class="n">tx</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i_0</span><span class="p">,</span> <span class="n">j_0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">tx</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i_1</span><span class="p">,</span> <span class="n">j_1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="n">tx</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i_n</span><span class="p">,</span> <span class="n">j_n</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Node positions</span>
+<span class="n">pos</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">x_1</span><span class="p">,</span> <span class="n">y_1</span><span class="p">],</span>
+    <span class="o">...</span>
+    <span class="p">[</span><span class="n">x_n</span><span class="p">,</span> <span class="n">y_n</span><span class="p">],</span>
+<span class="p">])</span>
+
+<span class="c1"># MCS values of transmitting nodes</span>
+<span class="n">mcs</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mcs_0</span><span class="p">,</span> <span class="n">mcs_1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">mcs_n</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+<span class="c1"># Transmission power of transmitting nodes</span>
+<span class="n">tx_power</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">tx_power_0</span><span class="p">,</span> <span class="n">tx_power_1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">tx_power_n</span><span class="p">])</span>
+
+<span class="c1"># Standard deviation of the white Gaussian noise</span>
+<span class="n">sigma</span> <span class="o">=</span> <span class="mf">2.</span>
+
+<span class="c1"># Walls matrix - 1 if there is a wall between node k and node l, 0 otherwise</span>
+<span class="n">walls</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">))</span>
+<span class="n">walls</span> <span class="o">=</span> <span class="n">walls</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">k_0</span><span class="p">,</span> <span class="n">l_0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">walls</span> <span class="o">=</span> <span class="n">walls</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">k_1</span><span class="p">,</span> <span class="n">l_1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="n">walls</span> <span class="o">=</span> <span class="n">walls</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">k_m</span><span class="p">,</span> <span class="n">l_m</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Calculate the effective data rate with the simulator</span>
 <span class="n">data_rate</span> <span class="o">=</span> <span class="n">network_data_rate</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">mcs</span><span class="p">,</span> <span class="n">tx_power</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">walls</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>For more detailed examples, refer to the test cases in
 <code class="docutils literal notranslate"><span class="pre">test/test_sim.py</span></code>.</p>
+</section>
+<section id="jax-jit-compilation">
+<h2>JAX JIT Compilation<a class="headerlink" href="#jax-jit-compilation" title="Link to this heading">¶</a></h2>
+<p>The simulator is written in JAX, which enables just-in-time (JIT) compilation
+and hardware acceleration. The use of JIT is strongly recommended as it can
+improve the performance of the simulator by orders of magnitude. To enable JIT,
+apply the <cite>jax.jit</cite> transformation on the simulator function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
+<span class="kn">from</span> <span class="nn">mapc_sim.sim</span> <span class="kn">import</span> <span class="n">network_data_rate</span>
+
+<span class="c1"># Define your network configuration</span>
+<span class="c1"># ...</span>
+
+<span class="n">network_data_rate_jit</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">network_data_rate</span><span class="p">)</span>
+<span class="n">data_rate</span> <span class="o">=</span> <span class="n">network_data_rate_jit</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">mcs</span><span class="p">,</span> <span class="n">tx_power</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">walls</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As the <cite>jax.jit</cite> transformation can be applied to any function, you can also use
+it to JIT-compile closures. For example, you can JIT-compile the <cite>network_data_rate</cite>
+function with a fixed network configuration as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+
+<span class="kn">import</span> <span class="nn">jax</span>
+<span class="kn">from</span> <span class="nn">mapc_sim.sim</span> <span class="kn">import</span> <span class="n">network_data_rate</span>
+
+<span class="n">pos</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">walls</span> <span class="o">=</span> <span class="o">...</span>
+
+<span class="n">network_data_rate_jit</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span>
+    <span class="n">network_data_rate</span><span class="p">,</span>
+    <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span>
+    <span class="n">walls</span><span class="o">=</span><span class="n">walls</span><span class="p">,</span>
+<span class="p">))</span>
+
+<span class="c1"># Define the remaining values</span>
+<span class="c1"># ...</span>
+
+<span class="n">data_rate</span> <span class="o">=</span> <span class="n">network_data_rate_jit</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">tx</span><span class="o">=</span><span class="n">tx</span><span class="p">,</span> <span class="n">mcs</span><span class="o">=</span><span class="n">mcs</span><span class="p">,</span> <span class="n">tx_power</span><span class="o">=</span><span class="n">tx_power</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="reproducibility">
+<h2>Reproducibility<a class="headerlink" href="#reproducibility" title="Link to this heading">¶</a></h2>
+<p>The simulator uses JAX’s PRNG. This ensures that the simulator is fully reproducible.
+However, the same key should be used at most once for each simulation so that the
+results are not correlated. For example, you can generate a new key and split it into
+two keys in each step of a simulation:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
+<span class="kn">from</span> <span class="nn">mapc_sim.sim</span> <span class="kn">import</span> <span class="n">network_data_rate</span>
+
+<span class="c1"># Define your network configuration</span>
+<span class="c1"># ...</span>
+
+<span class="n">key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="c1"># Generate two new keys, one for the current step and one for the next splits</span>
+    <span class="n">key</span><span class="p">,</span> <span class="n">subkey</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="n">data_rate</span> <span class="o">=</span> <span class="n">network_data_rate</span><span class="p">(</span><span class="n">subkey</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">mcs</span><span class="p">,</span> <span class="n">tx_power</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">walls</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="bit-floating-point-precision">
+<h2>64-bit Floating Point Precision<a class="headerlink" href="#bit-floating-point-precision" title="Link to this heading">¶</a></h2>
+<p>If you want to use 64-bit floating point precision, you can set the appropriate
+environment variable before running your script:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">JAX_ENABLE_X64</span><span class="o">=</span><span class="s2">&quot;True&quot;</span>
+</pre></div>
+</div>
+<p>Alternatively, you can set the environment variable in your Python script:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;JAX_ENABLE_X64&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;True&quot;</span>
+</pre></div>
+</div>
 </section>
 <section id="testing-and-benchmarking">
 <h2>Testing and Benchmarking<a class="headerlink" href="#testing-and-benchmarking" title="Link to this heading">¶</a></h2>
@@ -111,7 +225,7 @@ for a given network configuration. Example usage:</p>
 <ul class="simple">
 <li><p>The simulator is written in JAX, an autodiff library for Python. It
 may require additional dependencies or configurations to run
-properly, especially with GPU acceleration. For more information on
+properly, especially with hardware acceleration. For more information on
 JAX, please refer to the official <a class="reference external" href="https://jax.readthedocs.io/en/latest/">JAX
 repository</a>.</p></li>
 </ul>
