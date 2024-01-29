@@ -59,17 +59,16 @@ def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power:
     distance = jnp.sqrt(jnp.sum((pos[:, None, :] - pos[None, ...]) ** 2, axis=-1))
     distance = jnp.clip(distance, REFERENCE_DISTANCE, None)
 
-    signal_power = tx_power - tgax_path_loss(distance, walls)
-    signal_power = jnp.where(jnp.isinf(signal_power), 0., signal_power)
+    signal_power = tx_power[:, None] - tgax_path_loss(distance, walls)
 
-    interference_matrix = jnp.ones_like(tx) * tx.sum(axis=0)[:, None] * tx.sum(axis=1) * (1 - tx.T)
+    interference_matrix = jnp.ones_like(tx) * tx.sum(axis=0) * tx.sum(axis=1, keepdims=True) * (1 - tx)
     a = jnp.concatenate([signal_power, jnp.full((1, signal_power.shape[1]), fill_value=NOISE_FLOOR)], axis=0)
     b = jnp.concatenate([interference_matrix, jnp.ones((1, interference_matrix.shape[1]))], axis=0)
     interference = jax.vmap(logsumexp_db, in_axes=(1, 1))(a, b)
 
     sinr = signal_power - interference
     sinr = sinr + tfd.Normal(loc=jnp.zeros_like(signal_power), scale=sigma).sample(seed=normal_key)
-    sinr = (sinr * tx.T).sum(axis=0)
+    sinr = (sinr * tx).sum(axis=1)
 
     sdist = tfd.Normal(loc=MEAN_SNRS[mcs], scale=2.)
     logit_success_prob = sdist.log_cdf(sinr) - sdist.log_survival_function(sinr)
