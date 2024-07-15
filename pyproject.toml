@@ -17,11 +17,11 @@ authors = [
 
 requires-python = ">=3.9"
 dependencies = [
-  "chex~=0.1.85",
-  "jax~=0.4.23",
-  "jaxlib~=0.4.23",
-  "matplotlib~=3.8.2",
-  "tensorflow-probability[jax]~=0.23.0"
+  "chex~=0.1.86",
+  "jax~=0.4.30",
+  "jaxlib~=0.4.30",
+  "matplotlib~=3.9.1",
+  "tensorflow-probability[jax]~=0.24.0"
 ]
 
 [build-system]
