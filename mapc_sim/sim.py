@@ -12,7 +12,7 @@ tfd = tfp.distributions
 
 
 def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power: Array, sigma: Scalar,
-                      walls: Array, return_sample: bool = False) -> Union[Scalar,tuple]:
+                      loss_gain: Array, return_sample: bool = False) -> Union[Scalar,tuple]:
     r"""
     Calculates the aggregated effective data rate based on the nodes' positions, MCS, and tx power.
     Channel is modeled using TGax channel model with additive white Gaussian noise. Effective
@@ -41,9 +41,9 @@ def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power:
         Transmission power of the nodes. Each entry corresponds to the transmission power of the transmitting node.
     sigma: Scalar
         Standard deviation of the additive white Gaussian noise.
-    walls: Array
-        Adjacency matrix of walls. If node i is separated from node j by a wall,
-        then `walls[i, j] = 1`, otherwise `walls[i, j] = 0`.
+    loss_gain: Array
+        Adjacency matrix of combined loss and gain. If node `i` is separated from node `j` by a wall or the antena is directional,
+        then `loss_gain[i, j] = val`, otherwise `walls[i, j] = 0`.
     return_sample: bool
         A flag indicating whether the simulator returns raw number of transmitted frames.
 
@@ -59,7 +59,7 @@ def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power:
     distance = jnp.sqrt(jnp.sum((pos[:, None, :] - pos[None, ...]) ** 2, axis=-1))
     distance = jnp.clip(distance, REFERENCE_DISTANCE, None)
 
-    signal_power = tx_power[:, None] - tgax_path_loss(distance, walls)
+    signal_power = tx_power[:, None] - tgax_path_loss(distance, loss_gain)
 
     interference_matrix = jnp.ones_like(tx) * tx.sum(axis=0) * tx.sum(axis=1, keepdims=True) * (1 - tx)
     a = jnp.concatenate([signal_power, jnp.full((1, signal_power.shape[1]), fill_value=NOISE_FLOOR)], axis=0)

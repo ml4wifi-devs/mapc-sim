@@ -1,11 +1,10 @@
 import jax
-import jax.numpy as jnp
 from chex import Array
 
 from mapc_sim.constants import *
 
 
-def tgax_path_loss(distance: Array, walls: Array) -> Array:
+def tgax_path_loss(distance: Array, loss_gain: Array) -> Array:
     r"""
     Calculates the path loss according to the TGax channel model [1]_.
 
@@ -13,7 +12,7 @@ def tgax_path_loss(distance: Array, walls: Array) -> Array:
     ----------
     distance: Array
         Distance between nodes
-    walls: Array
+    loss_gain: Array
         Adjacency matrix describing walls between nodes (1 if there is a wall, 0 otherwise).
 
     Returns
@@ -27,7 +26,7 @@ def tgax_path_loss(distance: Array, walls: Array) -> Array:
     """
 
     return (40.05 + 20 * jnp.log10((jnp.minimum(distance, BREAKING_POINT) * CENTRAL_FREQUENCY) / 2.4) +
-            (distance > BREAKING_POINT) * 35 * jnp.log10(distance / BREAKING_POINT) + WALL_LOSS * walls)
+            (distance > BREAKING_POINT) * 35 * jnp.log10(distance / BREAKING_POINT) + loss_gain)
 
 
 def logsumexp_db(a: Array, b: Array) -> Array:
