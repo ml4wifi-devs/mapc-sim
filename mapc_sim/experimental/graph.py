@@ -1,38 +1,37 @@
+from dataclasses import dataclass
 from functools import reduce, partial
 from typing import Optional, Protocol
 
-import chex
 import jax
 import jax.numpy as jnp
 import jraph
 import numpy as np
-from chex import Array
 from jraph import segment_max, segment_sum, segment_softmax
 
 
-@chex.dataclass
+@dataclass
 class Node:
     """Node features"""
-    is_ap: Array
-    mcs: Array
-    pos: Array
-    tx_power: Array
+    is_ap: jax.Array
+    mcs: jax.Array
+    pos: jax.Array
+    tx_power: jax.Array
 
 
-@chex.dataclass
+@dataclass
 class Edge:
     """Edge features"""
-    wall: Array
-    transmission: Array
+    wall: jax.Array
+    transmission: jax.Array
 
 
 class Scenario(Protocol):
     id: int
     associations: dict[int, [list[int]]]
-    pos: Array
-    mcs: Array
-    tx_power: Array
-    walls: Array
+    pos: jax.Array
+    mcs: jax.Array
+    tx_power: jax.Array
+    walls: jax.Array
 
 
 def scenario_to_graph_tupple(scenario: Scenario) -> jraph.GraphsTuple:
@@ -81,35 +80,35 @@ def scenario_to_graph_tupple(scenario: Scenario) -> jraph.GraphsTuple:
 
 @partial(jax.custom_jvp, nondiff_argnums=(1, 2, 3, 4))
 def segment_logsumexp(
-        x: Array,
-        segment_ids: Array,
+        x: jax.Array,
+        segment_ids: jax.Array,
         num_segments: Optional[int] = None,
         indices_are_sorted: bool = False,
         unique_indices: bool = False
-) -> Array:
+) -> jax.Array:
     r"""
     Computes a segment-wise logsumexp.
 
     Parameters
     ----------
-    x: Array
-        An array of to be segmented with logsumexp.
-    segment_ids: Array
-        An array with integer dtype that indicates the segments of ``data`` (along its leading axis) to be maxed over.
+    x: jax.Array
+        An jax.Array of to be segmented with logsumexp.
+    segment_ids: jax.Array
+        An jax.Array with integer dtype that indicates the segments of ``data`` (along its leading axis) to be maxed over.
         Values can be repeated and need not be sorted. Values outside the range [0, num_segments) are dropped and
         do not contribute to the result.
-    num_segments: Array, optional
+    num_segments: jax.Array, optional
         An optional integer with positive value indicating the number of segments. The default is
         ``jnp.maximum(jnp.max(segment_ids) + 1, jnp.max(-segment_ids))`` but since ``num_segments`` determines the
         size of the output, a static value must be provided to use ``segment_sum`` in a ``jit``-compiled function.
-    indices_are_sorted: Array, optional
+    indices_are_sorted: jax.Array, optional
         Whether ``segment_ids`` is known to be sorted.
-    unique_indices: Array, optional
+    unique_indices: jax.Array, optional
         Whether ``segment_ids`` is known to be free of duplicates.
 
     Returns
     -------
-    Array
+    jax.Array
         The segment logsumexp-ed ``x``.
     """
 
@@ -125,29 +124,29 @@ def segment_logsumexp(
 
 @segment_logsumexp.defjvp
 def segment_logsumexp_jvp(
-        segment_ids: Array,
+        segment_ids: jax.Array,
         num_segments: Optional[int],
         indices_are_sorted: bool,
         unique_indices: bool,
-        primals: Array,
-        tangents: Array
-) -> tuple[Array, Array]:
+        primals: jax.Array,
+        tangents: jax.Array
+) -> tuple[jax.Array, jax.Array]:
     """
     Computes the Jacobian-vector product of :func:`segment_logsumexp`.
 
     Parameters
     ----------
-    segment_ids: Array
+    segment_ids: jax.Array
         See also :func:`segment_logsumexp` for details.
-    num_segments: Array, optional
+    num_segments: jax.Array, optional
         See also :func:`segment_logsumexp` for details.
-    indices_are_sorted: Array, optional
+    indices_are_sorted: jax.Array, optional
         See also :func:`segment_logsumexp` for details.
-    unique_indices: Array, optional
+    unique_indices: jax.Array, optional
         See also :func:`segment_logsumexp` for details.
-    primals: Array
+    primals: jax.Array
         The primal arguments of :func:`segment_logsumexp`.
-    tangents: Array
+    tangents: jax.Array
         The tangent arguments of :py:func:`segment_logsumexp`.
     """
 
@@ -162,12 +161,12 @@ def segment_logsumexp_jvp(
 
 
 def segment_logsumexp_db(
-        x: Array,
-        segment_ids: Array,
+        x: jax.Array,
+        segment_ids: jax.Array,
         num_segments: Optional[int] = None,
         indices_are_sorted: bool = False,
         unique_indices: bool = False
-) -> Array:
+) -> jax.Array:
     r"""
     Computes :func:`segment_logsumexp` for dB, i.e., :math:`10 * \log_{10}(\sum_i 10^{a_i/10})`
 
@@ -177,7 +176,7 @@ def segment_logsumexp_db(
 
     Returns
     -------
-    Array
+    jax.Array
         The segment `logsumexp` in dB
     """
 

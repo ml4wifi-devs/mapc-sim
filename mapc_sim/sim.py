@@ -3,7 +3,6 @@ from typing import Union
 import jax
 import jax.numpy as jnp
 import tensorflow_probability.substrates.jax as tfp
-from chex import Array, PRNGKey, Scalar
 
 from mapc_sim.constants import *
 from mapc_sim.utils import logsumexp_db, tgax_path_loss
@@ -11,8 +10,8 @@ from mapc_sim.utils import logsumexp_db, tgax_path_loss
 tfd = tfp.distributions
 
 
-def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power: Array, sigma: Scalar,
-                      walls: Array, return_sample: bool = False) -> Union[Scalar,tuple]:
+def network_data_rate(key: jax.random.PRNGKey, tx: jax.Array, pos: jax.Array, mcs: jax.Array, tx_power: jax.Array,
+                      sigma: float, walls: jax.Array, return_sample: bool = False) -> Union[float, tuple]:
     r"""
     Calculates the aggregated effective data rate based on the nodes' positions, MCS, and tx power.
     Channel is modeled using TGax channel model with additive white Gaussian noise. Effective
@@ -39,7 +38,7 @@ def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power:
         Modulation and coding scheme of the nodes. Each entry corresponds to MCS of the transmitting node.
     tx_power: Array
         Transmission power of the nodes. Each entry corresponds to the transmission power of the transmitting node.
-    sigma: Scalar
+    sigma: float
         Standard deviation of the additive white Gaussian noise.
     walls: Array
         Adjacency matrix of walls. If node i is separated from node j by a wall,
@@ -49,7 +48,7 @@ def network_data_rate(key: PRNGKey, tx: Array, pos: Array, mcs: Array, tx_power:
 
     Returns
     -------
-    Scalar | tuple
+    float | tuple
         Aggregated effective data rate in Mb/s if ``return_sample`` is ``False``.
         Otherwise, a pair of data rate and the number of transmitted frames.
     """

@@ -1,11 +1,10 @@
 import jax
 import jax.numpy as jnp
-from chex import Array
 
 from mapc_sim.constants import *
 
 
-def tgax_path_loss(distance: Array, walls: Array) -> Array:
+def tgax_path_loss(distance: jax.Array, walls: jax.Array) -> jax.Array:
     r"""
     Calculates the path loss according to the TGax channel model [1]_.
 
@@ -30,7 +29,7 @@ def tgax_path_loss(distance: Array, walls: Array) -> Array:
             (distance > BREAKING_POINT) * 35 * jnp.log10(distance / BREAKING_POINT) + WALL_LOSS * walls)
 
 
-def logsumexp_db(a: Array, b: Array) -> Array:
+def logsumexp_db(a: jax.Array, b: jax.Array) -> jax.Array:
     r"""
     Computes :func:`jax.nn.logsumexp` for dB i.e. :math:`10 * \log_{10}(\sum_i b_i 10^{a_i/10})`
 
