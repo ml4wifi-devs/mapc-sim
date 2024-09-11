@@ -57,7 +57,7 @@ If node i is transmitting to node j, then <cite>tx[i, j] = 1</cite>, otherwise <
 <li><p><strong>pos</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Two dimensional array of node positions. Each row corresponds to X and Y coordinates of a node.</p></li>
 <li><p><strong>mcs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Modulation and coding scheme of the nodes. Each entry corresponds to MCS of the transmitting node.</p></li>
 <li><p><strong>tx_power</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Transmission power of the nodes. Each entry corresponds to the transmission power of the transmitting node.</p></li>
-<li><p><strong>sigma</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Scalar</span></code>) – Standard deviation of the additive white Gaussian noise.</p></li>
+<li><p><strong>sigma</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Standard deviation of the additive white Gaussian noise.</p></li>
 <li><p><strong>walls</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Adjacency matrix of walls. If node i is separated from node j by a wall,
 then <cite>walls[i, j] = 1</cite>, otherwise <cite>walls[i, j] = 0</cite>.</p></li>
 <li><p><strong>return_sample</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – A flag indicating whether the simulator returns raw number of transmitted frames.</p></li>
@@ -68,7 +68,7 @@ then <cite>walls[i, j] = 1</cite>, otherwise <cite>walls[i, j] = 0</cite>.</p></
 Otherwise, a pair of data rate and the number of transmitted frames.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Scalar</span> <span class="pre">|</span> <span class="pre">tuple</span></code></p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span> <span class="pre">|</span> <span class="pre">tuple</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -288,7 +288,7 @@ Install it as:</p>
 <dd class="field-odd"><p>The segment <cite>logsumexp</cite> in dB</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code></p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">jax.Array</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -300,12 +300,12 @@ Install it as:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>segment_ids</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – See also <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code> for details.</p></li>
-<li><p><strong>num_segments</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>, <em>optional</em>) – See also <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code> for details.</p></li>
-<li><p><strong>indices_are_sorted</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>, <em>optional</em>) – See also <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code> for details.</p></li>
-<li><p><strong>unique_indices</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>, <em>optional</em>) – See also <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code> for details.</p></li>
-<li><p><strong>primals</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – The primal arguments of <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code>.</p></li>
-<li><p><strong>tangents</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – The tangent arguments of <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code>.</p></li>
+<li><p><strong>segment_ids</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">jax.Array</span></code>) – See also <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code> for details.</p></li>
+<li><p><strong>num_segments</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">jax.Array</span></code>, <em>optional</em>) – See also <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code> for details.</p></li>
+<li><p><strong>indices_are_sorted</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">jax.Array</span></code>, <em>optional</em>) – See also <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code> for details.</p></li>
+<li><p><strong>unique_indices</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">jax.Array</span></code>, <em>optional</em>) – See also <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code> for details.</p></li>
+<li><p><strong>primals</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">jax.Array</span></code>) – The primal arguments of <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code>.</p></li>
+<li><p><strong>tangents</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">jax.Array</span></code>) – The tangent arguments of <code class="xref py py-func docutils literal notranslate"><span class="pre">segment_logsumexp()</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
