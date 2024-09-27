@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from chex import dataclass
 from functools import reduce, partial
 from typing import Optional, Protocol
 
