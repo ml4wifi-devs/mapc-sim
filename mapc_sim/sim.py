@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 
 import jax
 import jax.numpy as jnp
@@ -10,7 +10,7 @@ from mapc_sim.utils import logsumexp_db, tgax_path_loss
 tfd = tfp.distributions
 
 
-def network_data_rate(key: jax.random.PRNGKey, tx: jax.Array, pos: jax.Array, mcs: jax.Array, tx_power: jax.Array,
+def network_data_rate(key: jax.random.PRNGKey, tx: jax.Array, pos: jax.Array, mcs: Optional[jax.Array], tx_power: jax.Array,
                       sigma: float, walls: jax.Array, return_sample: bool = False) -> Union[float, tuple]:
     r"""
     Calculates the aggregated effective data rate based on the nodes' positions, MCS, and tx power.
@@ -36,8 +36,7 @@ def network_data_rate(key: jax.random.PRNGKey, tx: jax.Array, pos: jax.Array, mc
         Two dimensional array of node positions. Each row corresponds to X and Y coordinates of a node.
     mcs: Array
         Modulation and coding scheme of the nodes. Each entry corresponds to MCS of the transmitting node.
-        If MCS is set to -1, the simulator will select the best MCS for each transmission. The best MCS is
-        the same for all transmissions.
+        If MCS is set to None, the simulator will select the best MCS greedily.
     tx_power: Array
         Transmission power of the nodes. Each entry corresponds to the transmission power of the transmitting node.
     sigma: float
@@ -71,29 +70,17 @@ def network_data_rate(key: jax.random.PRNGKey, tx: jax.Array, pos: jax.Array, mc
     sinr = sinr + tfd.Normal(loc=jnp.zeros_like(signal_power), scale=sigma).sample(seed=normal_key)
     sinr = (sinr * tx).sum(axis=1)
 
-    def _sinr_to_data_rate(sinr: jax.Array, mcs: jax.Array) -> tuple[jax.Array, jax.Array]:
-        sdist = tfd.Normal(loc=MEAN_SNRS[mcs], scale=2.)
-        logit_success_prob = sdist.log_cdf(sinr) - sdist.log_survival_function(sinr)
-        logit_success_prob = jnp.where(sinr > 0, logit_success_prob, -jnp.inf)
+    if mcs is None:
+        expected_data_rate = DATA_RATES[:, None] * tfd.Normal(loc=MEAN_SNRS[:, None], scale=2.).cdf(sinr)
+        mcs = jnp.argmax(expected_data_rate, axis=0)
 
-        n = jnp.round(DATA_RATES[mcs] * 1e6 * TAU / FRAME_LEN)
-        frames_transmitted = tfd.Binomial(total_count=n, logits=logit_success_prob).sample(seed=binomial_key)
-        average_data_rate = FRAME_LEN * (frames_transmitted / TAU)
+    sdist = tfd.Normal(loc=MEAN_SNRS[mcs], scale=2.)
+    logit_success_prob = sdist.log_cdf(sinr) - sdist.log_survival_function(sinr)
+    logit_success_prob = jnp.where(sinr > 0, logit_success_prob, -jnp.inf)
 
-        return average_data_rate, frames_transmitted
-
-    def _select_best_mcs(sinr: jax.Array) -> tuple[jax.Array, jax.Array]:
-        mcs = jnp.arange(len(DATA_RATES))[:, None]
-        mcs = jnp.repeat(mcs, len(sinr), axis=1)
-        average_data_rate, frames_transmitted = jax.vmap(_sinr_to_data_rate, in_axes=(None, 0))(sinr, mcs)
-        best_mcs = jnp.argmax(average_data_rate.sum(axis=1))
-        return average_data_rate[best_mcs], frames_transmitted[best_mcs]
-
-    sel_avg_rate, sel_frames_tx = _sinr_to_data_rate(sinr, mcs)
-    best_avg_rate, best_frames_tx = _select_best_mcs(sinr)
-
-    average_data_rate = jnp.where(mcs == -1, sel_avg_rate, best_avg_rate)
-    frames_transmitted = jnp.where(mcs == -1, sel_frames_tx, best_frames_tx)
+    n = jnp.round(DATA_RATES[mcs] * 1e6 * TAU / FRAME_LEN)
+    frames_transmitted = tfd.Binomial(total_count=n, logits=logit_success_prob).sample(seed=binomial_key)
+    average_data_rate = FRAME_LEN * (frames_transmitted / TAU)
 
     if return_sample:
         return average_data_rate.sum() / float(1e6), frames_transmitted
