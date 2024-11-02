@@ -55,7 +55,8 @@ of the signal powers of all interfering nodes and the noise floor in the linear 
 <li><p><strong>tx</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Two dimensional array of booleans indicating whether a node is transmitting to another node.
 If node i is transmitting to node j, then <cite>tx[i, j] = 1</cite>, otherwise <cite>tx[i, j] = 0</cite>.</p></li>
 <li><p><strong>pos</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Two dimensional array of node positions. Each row corresponds to X and Y coordinates of a node.</p></li>
-<li><p><strong>mcs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Modulation and coding scheme of the nodes. Each entry corresponds to MCS of the transmitting node.</p></li>
+<li><p><strong>mcs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Modulation and coding scheme of the nodes. Each entry corresponds to MCS of the transmitting node.
+If MCS is set to None, the simulator will select the best MCS greedily.</p></li>
 <li><p><strong>tx_power</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Transmission power of the nodes. Each entry corresponds to the transmission power of the transmitting node.</p></li>
 <li><p><strong>sigma</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Standard deviation of the additive white Gaussian noise.</p></li>
 <li><p><strong>walls</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Adjacency matrix of walls. If node i is separated from node j by a wall,
