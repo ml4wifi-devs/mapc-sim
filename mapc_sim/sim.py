@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 
 import jax
 import jax.numpy as jnp
@@ -10,7 +10,7 @@ from mapc_sim.utils import logsumexp_db, tgax_path_loss
 tfd = tfp.distributions
 
 
-def network_data_rate(key: jax.random.PRNGKey, tx: jax.Array, pos: jax.Array, mcs: jax.Array, tx_power: jax.Array,
+def network_data_rate(key: jax.random.PRNGKey, tx: jax.Array, pos: jax.Array, mcs: Optional[jax.Array], tx_power: jax.Array,
                       sigma: float, walls: jax.Array, return_sample: bool = False) -> Union[float, tuple]:
     r"""
     Calculates the aggregated effective data rate based on the nodes' positions, MCS, and tx power.
@@ -36,6 +36,7 @@ def network_data_rate(key: jax.random.PRNGKey, tx: jax.Array, pos: jax.Array, mc
         Two dimensional array of node positions. Each row corresponds to X and Y coordinates of a node.
     mcs: Array
         Modulation and coding scheme of the nodes. Each entry corresponds to MCS of the transmitting node.
+        If MCS is set to None, the simulator will select the best MCS greedily.
     tx_power: Array
         Transmission power of the nodes. Each entry corresponds to the transmission power of the transmitting node.
     sigma: float
@@ -68,6 +69,10 @@ def network_data_rate(key: jax.random.PRNGKey, tx: jax.Array, pos: jax.Array, mc
     sinr = signal_power - interference
     sinr = sinr + tfd.Normal(loc=jnp.zeros_like(signal_power), scale=sigma).sample(seed=normal_key)
     sinr = (sinr * tx).sum(axis=1)
+
+    if mcs is None:
+        expected_data_rate = DATA_RATES[:, None] * tfd.Normal(loc=MEAN_SNRS[:, None], scale=2.).cdf(sinr)
+        mcs = jnp.argmax(expected_data_rate, axis=0)
 
     sdist = tfd.Normal(loc=MEAN_SNRS[mcs], scale=2.)
     logit_success_prob = sdist.log_cdf(sinr) - sdist.log_survival_function(sinr)
