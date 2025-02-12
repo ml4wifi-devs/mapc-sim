@@ -36,7 +36,7 @@
 <h1>Sim<a class="headerlink" href="#sim" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="mapc_sim.sim.network_data_rate">
-<span class="sig-prename descclassname"><span class="pre">mapc_sim.sim.</span></span><span class="sig-name descname"><span class="pre">network_data_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx_power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.sim.network_data_rate" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.sim.</span></span><span class="sig-name descname"><span class="pre">network_data_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx_power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_sample=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_loss_fn=functools.partial(&lt;function</span> <span class="pre">tgax_path_loss&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaking_point=10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wall_loss=7.0)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.sim.network_data_rate" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates the aggregated effective data rate based on the nodes’ positions, MCS, and tx power.
 Channel is modeled using TGax channel model with additive white Gaussian noise. Effective
 data rate is calculated as the sum of data rates of all successful transmissions. Success of
@@ -62,6 +62,10 @@ If MCS is set to None, the simulator will select the best MCS greedily.</p></li>
 <li><p><strong>walls</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Adjacency matrix of walls. If node i is separated from node j by a wall,
 then <cite>walls[i, j] = 1</cite>, otherwise <cite>walls[i, j] = 0</cite>.</p></li>
 <li><p><strong>return_sample</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – A flag indicating whether the simulator returns raw number of transmitted frames.</p></li>
+<li><p><strong>path_loss_fn</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code>) – A function that calculates the path loss between two nodes. The function signature should be
+<cite>path_loss_fn(distance: Array, walls: Array) -&gt; Array</cite>, where <cite>distance</cite> is the matrix of distances
+between nodes and <cite>walls</cite> is the adjacency matrix of walls. By default, the simulator uses the
+residential TGax path loss model.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -77,6 +81,64 @@ Otherwise, a pair of data rate and the number of transmitted frames.</p>
 </section>
 <section id="module-mapc_sim.utils">
 <span id="utils"></span><span id="module-mapc_sim"></span><h1>Utils<a class="headerlink" href="#module-mapc_sim.utils" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="mapc_sim.utils.default_path_loss">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.utils.</span></span><span class="sig-name descname"><span class="pre">default_path_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaking_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wall_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.utils.default_path_loss" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates the path loss according to the TGax channel model <a href="#id9"><span class="problematic" id="id1">[1]_</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distance</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Distance between nodes</p></li>
+<li><p><strong>walls</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Adjacency matrix describing walls between nodes (1 if there is a wall, 0 otherwise).</p></li>
+<li><p><strong>breaking_point</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Breaking point of the path loss model</p></li>
+<li><p><strong>wall_loss</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Wall loss factor</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path loss in dB</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://www.ieee802.org/11/Reports/tgax_update.htm#:~:text=TGax%20Selection%20Procedure-,11%2D14%2D0980,-TGax%20Simulation%20Scenarios">https://www.ieee802.org/11/Reports/tgax_update.htm#:~:text=TGax%20Selection%20Procedure-,11%2D14%2D0980,-TGax%20Simulation%20Scenarios</a></p>
+</aside>
+</aside>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mapc_sim.utils.enterprise_tgax_path_loss">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.utils.</span></span><span class="sig-name descname"><span class="pre">enterprise_tgax_path_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaking_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wall_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.utils.enterprise_tgax_path_loss" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates the path loss according to the TGax channel model <a href="#id10"><span class="problematic" id="id3">[1]_</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distance</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Distance between nodes</p></li>
+<li><p><strong>walls</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Adjacency matrix describing walls between nodes (1 if there is a wall, 0 otherwise).</p></li>
+<li><p><strong>breaking_point</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Breaking point of the path loss model</p></li>
+<li><p><strong>wall_loss</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Wall loss factor</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path loss in dB</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id4" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://www.ieee802.org/11/Reports/tgax_update.htm#:~:text=TGax%20Selection%20Procedure-,11%2D14%2D0980,-TGax%20Simulation%20Scenarios">https://www.ieee802.org/11/Reports/tgax_update.htm#:~:text=TGax%20Selection%20Procedure-,11%2D14%2D0980,-TGax%20Simulation%20Scenarios</a></p>
+</aside>
+</aside>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="mapc_sim.utils.logsumexp_db">
 <span class="sig-prename descclassname"><span class="pre">mapc_sim.utils.</span></span><span class="sig-name descname"><span class="pre">logsumexp_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.utils.logsumexp_db" title="Link to this definition">¶</a></dt>
@@ -104,14 +166,16 @@ Otherwise, a pair of data rate and the number of transmitted frames.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="mapc_sim.utils.tgax_path_loss">
-<span class="sig-prename descclassname"><span class="pre">mapc_sim.utils.</span></span><span class="sig-name descname"><span class="pre">tgax_path_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.utils.tgax_path_loss" title="Link to this definition">¶</a></dt>
-<dd><p>Calculates the path loss according to the TGax channel model <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<dt class="sig sig-object py" id="mapc_sim.utils.residential_tgax_path_loss">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.utils.</span></span><span class="sig-name descname"><span class="pre">residential_tgax_path_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaking_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wall_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.utils.residential_tgax_path_loss" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates the path loss according to the TGax channel model <a href="#id11"><span class="problematic" id="id5">[1]_</span></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>distance</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Distance between nodes</p></li>
 <li><p><strong>walls</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Adjacency matrix describing walls between nodes (1 if there is a wall, 0 otherwise).</p></li>
+<li><p><strong>breaking_point</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Breaking point of the path loss model</p></li>
+<li><p><strong>wall_loss</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Wall loss factor</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -123,8 +187,37 @@ Otherwise, a pair of data rate and the number of transmitted frames.</p>
 </dl>
 <p class="rubric">References</p>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id2" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id6" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://www.ieee802.org/11/Reports/tgax_update.htm#:~:text=TGax%20Selection%20Procedure-,11%2D14%2D0980,-TGax%20Simulation%20Scenarios">https://www.ieee802.org/11/Reports/tgax_update.htm#:~:text=TGax%20Selection%20Procedure-,11%2D14%2D0980,-TGax%20Simulation%20Scenarios</a></p>
+</aside>
+</aside>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mapc_sim.utils.tgax_path_loss">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.utils.</span></span><span class="sig-name descname"><span class="pre">tgax_path_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaking_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wall_loss</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.utils.tgax_path_loss" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates the path loss according to the TGax channel model <a href="#id12"><span class="problematic" id="id7">[1]_</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distance</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Distance between nodes</p></li>
+<li><p><strong>walls</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Adjacency matrix describing walls between nodes (1 if there is a wall, 0 otherwise).</p></li>
+<li><p><strong>breaking_point</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Breaking point of the path loss model</p></li>
+<li><p><strong>wall_loss</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Wall loss factor</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path loss in dB</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id8" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="https://www.ieee802.org/11/Reports/tgax_update.htm#:~:text=TGax%20Selection%20Procedure-,11%2D14%2D0980,-TGax%20Simulation%20Scenarios">https://www.ieee802.org/11/Reports/tgax_update.htm#:~:text=TGax%20Selection%20Procedure-,11%2D14%2D0980,-TGax%20Simulation%20Scenarios</a></p>
 </aside>
 </aside>
@@ -133,13 +226,6 @@ Otherwise, a pair of data rate and the number of transmitted frames.</p>
 </section>
 <section id="module-mapc_sim.constants">
 <span id="constants"></span><h1>Constants<a class="headerlink" href="#module-mapc_sim.constants" title="Link to this heading">¶</a></h1>
-<dl class="py data">
-<dt class="sig sig-object py" id="mapc_sim.constants.BREAKING_POINT">
-<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">BREAKING_POINT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10.0</span></em><a class="headerlink" href="#mapc_sim.constants.BREAKING_POINT" title="Link to this definition">¶</a></dt>
-<dd><p>TGax channel model parameter (m)
-<a class="reference external" href="https://mentor.ieee.org/802.11/dcn/14/11-14-0980-16-00ax-simulation-scenarios.docx">https://mentor.ieee.org/802.11/dcn/14/11-14-0980-16-00ax-simulation-scenarios.docx</a> (p. 19)</p>
-</dd></dl>
-
 <dl class="py data">
 <dt class="sig sig-object py" id="mapc_sim.constants.CENTRAL_FREQUENCY">
 <span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">CENTRAL_FREQUENCY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.16</span></em><a class="headerlink" href="#mapc_sim.constants.CENTRAL_FREQUENCY" title="Link to this definition">¶</a></dt>
@@ -165,6 +251,19 @@ Otherwise, a pair of data rate and the number of transmitted frames.</p>
 <span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_TX_POWER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16.0206</span></em><a class="headerlink" href="#mapc_sim.constants.DEFAULT_TX_POWER" title="Link to this definition">¶</a></dt>
 <dd><p>Physical constant (dBm)
 <a class="reference external" href="https://www.nsnam.org/docs/release/3.40/doxygen/d0/d7d/wifi-phy_8cc_source.html#l00171">https://www.nsnam.org/docs/release/3.40/doxygen/d0/d7d/wifi-phy_8cc_source.html#l00171</a></p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.ENTERPRISE_BREAKING_POINT">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">ENTERPRISE_BREAKING_POINT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.0</span></em><a class="headerlink" href="#mapc_sim.constants.ENTERPRISE_BREAKING_POINT" title="Link to this definition">¶</a></dt>
+<dd><p>TGax channel model parameter (m)</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.ENTERPRISE_WALL_LOSS">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">ENTERPRISE_WALL_LOSS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.0</span></em><a class="headerlink" href="#mapc_sim.constants.ENTERPRISE_WALL_LOSS" title="Link to this definition">¶</a></dt>
+<dd><p>TGax channel model parameter (m)
+<a class="reference external" href="https://mentor.ieee.org/802.11/dcn/14/11-14-0980-16-00ax-simulation-scenarios.docx">https://mentor.ieee.org/802.11/dcn/14/11-14-0980-16-00ax-simulation-scenarios.docx</a> (p. 19)</p>
 </dd></dl>
 
 <dl class="py data">
@@ -210,12 +309,6 @@ Otherwise, a pair of data rate and the number of transmitted frames.</p>
 <span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">TAU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.005484</span></em><a class="headerlink" href="#mapc_sim.constants.TAU" title="Link to this definition">¶</a></dt>
 <dd><p>Tx slot duration (s)
 <a class="reference external" href="https://ieeexplore.ieee.org/document/8930559">https://ieeexplore.ieee.org/document/8930559</a></p>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="mapc_sim.constants.WALL_LOSS">
-<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">WALL_LOSS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7.0</span></em><a class="headerlink" href="#mapc_sim.constants.WALL_LOSS" title="Link to this definition">¶</a></dt>
-<dd><p>Simulation parameter (dB)</p>
 </dd></dl>
 
 </section>
@@ -375,16 +468,20 @@ Install it as:</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#module-mapc_sim.utils">Utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.utils.default_path_loss"><code class="docutils literal notranslate"><span class="pre">default_path_loss()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.utils.enterprise_tgax_path_loss"><code class="docutils literal notranslate"><span class="pre">enterprise_tgax_path_loss()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.utils.logsumexp_db"><code class="docutils literal notranslate"><span class="pre">logsumexp_db()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.utils.residential_tgax_path_loss"><code class="docutils literal notranslate"><span class="pre">residential_tgax_path_loss()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.utils.tgax_path_loss"><code class="docutils literal notranslate"><span class="pre">tgax_path_loss()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#module-mapc_sim.constants">Constants</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.BREAKING_POINT"><code class="docutils literal notranslate"><span class="pre">BREAKING_POINT</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.CENTRAL_FREQUENCY"><code class="docutils literal notranslate"><span class="pre">CENTRAL_FREQUENCY</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.DATA_RATES"><code class="docutils literal notranslate"><span class="pre">DATA_RATES</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.DEFAULT_SIGMA"><code class="docutils literal notranslate"><span class="pre">DEFAULT_SIGMA</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.DEFAULT_TX_POWER"><code class="docutils literal notranslate"><span class="pre">DEFAULT_TX_POWER</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.ENTERPRISE_BREAKING_POINT"><code class="docutils literal notranslate"><span class="pre">ENTERPRISE_BREAKING_POINT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.ENTERPRISE_WALL_LOSS"><code class="docutils literal notranslate"><span class="pre">ENTERPRISE_WALL_LOSS</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.FRAME_LEN"><code class="docutils literal notranslate"><span class="pre">FRAME_LEN</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.MAX_TX_POWER"><code class="docutils literal notranslate"><span class="pre">MAX_TX_POWER</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.MEAN_SNRS"><code class="docutils literal notranslate"><span class="pre">MEAN_SNRS</span></code></a></li>
@@ -392,7 +489,6 @@ Install it as:</p>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.NOISE_FLOOR"><code class="docutils literal notranslate"><span class="pre">NOISE_FLOOR</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.REFERENCE_DISTANCE"><code class="docutils literal notranslate"><span class="pre">REFERENCE_DISTANCE</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.TAU"><code class="docutils literal notranslate"><span class="pre">TAU</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.WALL_LOSS"><code class="docutils literal notranslate"><span class="pre">WALL_LOSS</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#graph-representation">Graph representation</a><ul>
