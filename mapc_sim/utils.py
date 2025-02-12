@@ -1,10 +1,12 @@
+from functools import partial
+
 import jax
 import jax.numpy as jnp
 
 from mapc_sim.constants import *
 
 
-def tgax_path_loss(distance: jax.Array, walls: jax.Array) -> jax.Array:
+def tgax_path_loss(distance: jax.Array, walls: jax.Array, breaking_point: jax.Array, wall_loss: jax.Array) -> jax.Array:
     r"""
     Calculates the path loss according to the TGax channel model [1]_.
 
@@ -14,6 +16,10 @@ def tgax_path_loss(distance: jax.Array, walls: jax.Array) -> jax.Array:
         Distance between nodes
     walls: Array
         Adjacency matrix describing walls between nodes (1 if there is a wall, 0 otherwise).
+    breaking_point: Array
+        Breaking point of the path loss model
+    wall_loss: Array
+        Wall loss factor
 
     Returns
     -------
@@ -25,8 +31,13 @@ def tgax_path_loss(distance: jax.Array, walls: jax.Array) -> jax.Array:
     .. [1] https://www.ieee802.org/11/Reports/tgax_update.htm#:~:text=TGax%20Selection%20Procedure-,11%2D14%2D0980,-TGax%20Simulation%20Scenarios
     """
 
-    return (40.05 + 20 * jnp.log10((jnp.minimum(distance, BREAKING_POINT) * CENTRAL_FREQUENCY) / 2.4) +
-            (distance > BREAKING_POINT) * 35 * jnp.log10(distance / BREAKING_POINT) + WALL_LOSS * walls)
+    return (40.05 + 20 * jnp.log10((jnp.minimum(distance, breaking_point) * CENTRAL_FREQUENCY) / 2.4) +
+            (distance > breaking_point) * 35 * jnp.log10(distance / breaking_point) + wall_loss * walls)
+
+
+residential_tgax_path_loss = partial(tgax_path_loss, breaking_point=RESIDENTIAL_BREAKING_POINT, wall_loss=RESIDENTIAL_WALL_LOSS)
+enterprise_tgax_path_loss = partial(tgax_path_loss, breaking_point=ENTERPRISE_BREAKING_POINT, wall_loss=ENTERPRISE_WALL_LOSS)
+default_path_loss = residential_tgax_path_loss
 
 
 def logsumexp_db(a: jax.Array, b: jax.Array) -> jax.Array:

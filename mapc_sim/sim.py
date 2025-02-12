@@ -1,17 +1,26 @@
-from typing import Union, Optional
+from typing import Callable, Optional, Union
 
 import jax
 import jax.numpy as jnp
 import tensorflow_probability.substrates.jax as tfp
 
 from mapc_sim.constants import *
-from mapc_sim.utils import logsumexp_db, tgax_path_loss
+from mapc_sim.utils import logsumexp_db, default_path_loss
 
 tfd = tfp.distributions
 
 
-def network_data_rate(key: jax.random.PRNGKey, tx: jax.Array, pos: jax.Array, mcs: Optional[jax.Array], tx_power: jax.Array,
-                      sigma: float, walls: jax.Array, return_sample: bool = False) -> Union[float, tuple]:
+def network_data_rate(
+        key: jax.random.PRNGKey,
+        tx: jax.Array,
+        pos: jax.Array,
+        mcs: Optional[jax.Array],
+        tx_power: jax.Array,
+        sigma: float,
+        walls: jax.Array,
+        return_sample: bool = False,
+        path_loss_fn: Callable = default_path_loss
+) -> Union[float, tuple]:
     r"""
     Calculates the aggregated effective data rate based on the nodes' positions, MCS, and tx power.
     Channel is modeled using TGax channel model with additive white Gaussian noise. Effective
@@ -46,6 +55,11 @@ def network_data_rate(key: jax.random.PRNGKey, tx: jax.Array, pos: jax.Array, mc
         then `walls[i, j] = 1`, otherwise `walls[i, j] = 0`.
     return_sample: bool
         A flag indicating whether the simulator returns raw number of transmitted frames.
+    path_loss_fn: Callable
+        A function that calculates the path loss between two nodes. The function signature should be
+        `path_loss_fn(distance: Array, walls: Array) -> Array`, where `distance` is the matrix of distances
+        between nodes and `walls` is the adjacency matrix of walls. By default, the simulator uses the
+        residential TGax path loss model.
 
     Returns
     -------
@@ -59,7 +73,7 @@ def network_data_rate(key: jax.random.PRNGKey, tx: jax.Array, pos: jax.Array, mc
     distance = jnp.sqrt(jnp.sum((pos[:, None, :] - pos[None, ...]) ** 2, axis=-1))
     distance = jnp.clip(distance, REFERENCE_DISTANCE, None)
 
-    signal_power = tx_power[:, None] - tgax_path_loss(distance, walls)
+    signal_power = tx_power[:, None] - path_loss_fn(distance, walls)
 
     interference_matrix = jnp.ones_like(tx) * tx.sum(axis=0) * tx.sum(axis=1, keepdims=True) * (1 - tx)
     a = jnp.concatenate([signal_power, jnp.full((1, signal_power.shape[1]), fill_value=NOISE_FLOOR)], axis=0)
