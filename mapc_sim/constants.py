@@ -23,13 +23,13 @@ CENTRAL_FREQUENCY = 5.160
 r"""Simulation parameter (GHz) 
 https://en.wikipedia.org/wiki/List_of_WLAN_channels#5_GHz_(802.11a/h/n/ac/ax)"""
 
-RESIDENTIAL_WALL_LOSS = 7.
-ENTERPRISE_WALL_LOSS = 5.
+RESIDENTIAL_WALL_LOSS = 5.
+ENTERPRISE_WALL_LOSS = 7.
 r"""TGax channel model parameter (m) 
 https://mentor.ieee.org/802.11/dcn/14/11-14-0980-16-00ax-simulation-scenarios.docx (p. 19)"""
 
-RESIDENTIAL_BREAKING_POINT = 10.
-ENTERPRISE_BREAKING_POINT = 5.
+RESIDENTIAL_BREAKING_POINT = 5.
+ENTERPRISE_BREAKING_POINT = 10.
 r"""TGax channel model parameter (m)"""
 
 REFERENCE_DISTANCE = 1.
