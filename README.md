@@ -67,6 +67,9 @@ pos = jnp.array([
 # MCS values of transmitting nodes
 mcs = jnp.array([mcs_0, mcs_1, ..., mcs_n], dtype=int)
 
+# You can also set the MCS value to None if you want to use the greedy MCS selection for all nodes
+# mcs = None
+
 # Transmission power of transmitting nodes
 tx_power = jnp.array([tx_power_0, tx_power_1, ..., tx_power_n])
 

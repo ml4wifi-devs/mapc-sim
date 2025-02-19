@@ -31,6 +31,7 @@ def tgax_path_loss(distance: jax.Array, walls: jax.Array, breaking_point: jax.Ar
     .. [1] https://www.ieee802.org/11/Reports/tgax_update.htm#:~:text=TGax%20Selection%20Procedure-,11%2D14%2D0980,-TGax%20Simulation%20Scenarios
     """
 
+    distance = jnp.clip(distance, REFERENCE_DISTANCE, None)
     return (40.05 + 20 * jnp.log10((jnp.minimum(distance, breaking_point) * CENTRAL_FREQUENCY) / 2.4) +
             (distance > breaking_point) * 35 * jnp.log10(distance / breaking_point) + wall_loss * walls)
 
