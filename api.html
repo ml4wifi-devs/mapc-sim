@@ -7,9 +7,10 @@
 
     <title>Sim &#8212; mapc_sim  documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=1fe5e9f7" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=ec641305" />
     <script src="_static/documentation_options.js?v=5929fcd5"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -83,7 +84,7 @@ Otherwise, a pair of data rate and the number of transmitted frames.</p>
 <span id="utils"></span><span id="module-mapc_sim"></span><h1>Utils<a class="headerlink" href="#module-mapc_sim.utils" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="mapc_sim.utils.default_path_loss">
-<span class="sig-prename descclassname"><span class="pre">mapc_sim.utils.</span></span><span class="sig-name descname"><span class="pre">default_path_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaking_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wall_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.utils.default_path_loss" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.utils.</span></span><span class="sig-name descname"><span class="pre">default_path_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaking_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wall_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.utils.default_path_loss" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates the path loss according to the TGax channel model <a href="#id9"><span class="problematic" id="id1">[1]_</span></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -112,7 +113,7 @@ Otherwise, a pair of data rate and the number of transmitted frames.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mapc_sim.utils.enterprise_tgax_path_loss">
-<span class="sig-prename descclassname"><span class="pre">mapc_sim.utils.</span></span><span class="sig-name descname"><span class="pre">enterprise_tgax_path_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaking_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wall_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.utils.enterprise_tgax_path_loss" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.utils.</span></span><span class="sig-name descname"><span class="pre">enterprise_tgax_path_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaking_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wall_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.utils.enterprise_tgax_path_loss" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates the path loss according to the TGax channel model <a href="#id10"><span class="problematic" id="id3">[1]_</span></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -167,7 +168,7 @@ Otherwise, a pair of data rate and the number of transmitted frames.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mapc_sim.utils.residential_tgax_path_loss">
-<span class="sig-prename descclassname"><span class="pre">mapc_sim.utils.</span></span><span class="sig-name descname"><span class="pre">residential_tgax_path_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaking_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wall_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.utils.residential_tgax_path_loss" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.utils.</span></span><span class="sig-name descname"><span class="pre">residential_tgax_path_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaking_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wall_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.utils.residential_tgax_path_loss" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates the path loss according to the TGax channel model <a href="#id11"><span class="problematic" id="id5">[1]_</span></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -324,7 +325,7 @@ Install it as:</p>
 </div>
 <dl class="py class" id="module-mapc_sim.experimental.graph">
 <dt class="sig sig-object py" id="mapc_sim.experimental.graph.Edge">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mapc_sim.experimental.graph.</span></span><span class="sig-name descname"><span class="pre">Edge</span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Edge" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mapc_sim.experimental.graph.</span></span><span class="sig-name descname"><span class="pre">Edge</span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Edge" title="Link to this definition">¶</a></dt>
 <dd><p>Edge features</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mapc_sim.experimental.graph.Edge.__init__">
@@ -350,7 +351,7 @@ Install it as:</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="mapc_sim.experimental.graph.Node">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mapc_sim.experimental.graph.</span></span><span class="sig-name descname"><span class="pre">Node</span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Node" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mapc_sim.experimental.graph.</span></span><span class="sig-name descname"><span class="pre">Node</span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Node" title="Link to this definition">¶</a></dt>
 <dd><p>Node features</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mapc_sim.experimental.graph.Node.__init__">
@@ -376,7 +377,7 @@ Install it as:</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="mapc_sim.experimental.graph.Scenario">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mapc_sim.experimental.graph.</span></span><span class="sig-name descname"><span class="pre">Scenario</span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Scenario" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mapc_sim.experimental.graph.</span></span><span class="sig-name descname"><span class="pre">Scenario</span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Scenario" title="Link to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="mapc_sim.experimental.graph.Scenario.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.experimental.graph.Scenario.__init__" title="Link to this definition">¶</a></dt>
@@ -442,7 +443,7 @@ Install it as:</p>
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <h1 class="logo"><a href="index.html">mapc_sim</a></h1>
 
@@ -460,7 +461,16 @@ Install it as:</p>
 
 
 
-<h3>Navigation</h3>
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Sim</a><ul>
@@ -525,16 +535,6 @@ Install it as:</p>
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -557,7 +557,7 @@ Install it as:</p>
 
     
     <a href="https://github.com/ml4wifi-devs/mapc-sim" class="github">
-        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+        <img src="_static/github-banner.svg" alt="Fork me on GitHub" class="github"/>
     </a>
     
 
