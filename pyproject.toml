@@ -15,7 +15,7 @@ authors = [
   {name = "Szymon Szott", email = "szymon.szott@agh.edu.pl"}
 ]
 
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
   "jax~=0.5.0",
   "tensorflow-probability[jax]~=0.25.0"
