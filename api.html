@@ -37,7 +37,7 @@
 <h1>Sim<a class="headerlink" href="#sim" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="mapc_sim.sim.network_data_rate">
-<span class="sig-prename descclassname"><span class="pre">mapc_sim.sim.</span></span><span class="sig-name descname"><span class="pre">network_data_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx_power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_sample=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_loss_fn=functools.partial(&lt;function</span> <span class="pre">tgax_path_loss&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaking_point=5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wall_loss=5.0)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.sim.network_data_rate" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.sim.</span></span><span class="sig-name descname"><span class="pre">network_data_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx_power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_width=20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_internals=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_loss_fn=functools.partial(&lt;function</span> <span class="pre">tgax_path_loss&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaking_point=5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wall_loss=5.0)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.sim.network_data_rate" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates the aggregated effective data rate based on the nodes’ positions, MCS, and tx power.
 Channel is modeled using TGax channel model with additive white Gaussian noise. Effective
 data rate is calculated as the sum of data rates of all successful transmissions. Success of
@@ -56,13 +56,14 @@ of the signal powers of all interfering nodes and the noise floor in the linear 
 <li><p><strong>tx</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Two dimensional array of booleans indicating whether a node is transmitting to another node.
 If node i is transmitting to node j, then <cite>tx[i, j] = 1</cite>, otherwise <cite>tx[i, j] = 0</cite>.</p></li>
 <li><p><strong>pos</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Two dimensional array of node positions. Each row corresponds to X and Y coordinates of a node.</p></li>
-<li><p><strong>mcs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Modulation and coding scheme of the nodes. Each entry corresponds to MCS of the transmitting node.
+<li><p><strong>mcs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span> <span class="pre">|</span> <span class="pre">None</span></code>) – Modulation and coding scheme of the nodes. Each entry corresponds to MCS of the transmitting node.
 If MCS is set to None, the simulator will select the best MCS greedily.</p></li>
 <li><p><strong>tx_power</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Transmission power of the nodes. Each entry corresponds to the transmission power of the transmitting node.</p></li>
 <li><p><strong>sigma</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Standard deviation of the additive white Gaussian noise.</p></li>
 <li><p><strong>walls</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>) – Adjacency matrix of walls. If node i is separated from node j by a wall,
 then <cite>walls[i, j] = 1</cite>, otherwise <cite>walls[i, j] = 0</cite>.</p></li>
-<li><p><strong>return_sample</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – A flag indicating whether the simulator returns raw number of transmitted frames.</p></li>
+<li><p><strong>channel_width</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Channel width in MHz.</p></li>
+<li><p><strong>return_internals</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – A flag indicating whether the simulator returns additional information about the simulation results.</p></li>
 <li><p><strong>path_loss_fn</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code>) – A function that calculates the path loss between two nodes. The function signature should be
 <cite>path_loss_fn(distance: Array, walls: Array) -&gt; Array</cite>, where <cite>distance</cite> is the matrix of distances
 between nodes and <cite>walls</cite> is the adjacency matrix of walls. By default, the simulator uses the
@@ -74,7 +75,7 @@ residential TGax path loss model.</p></li>
 Otherwise, a pair of data rate and the number of transmitted frames.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span> <span class="pre">|</span> <span class="pre">tuple</span></code></p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span> <span class="pre">|</span> <span class="pre">tuple[float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Internals]</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -236,8 +237,8 @@ Otherwise, a pair of data rate and the number of transmitted frames.</p>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="mapc_sim.constants.DATA_RATES">
-<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">DATA_RATES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Array([</span>&#160; <span class="pre">8.6,</span>&#160; <span class="pre">17.2,</span>&#160; <span class="pre">25.8,</span>&#160; <span class="pre">34.4,</span>&#160; <span class="pre">51.6,</span>&#160; <span class="pre">68.8,</span>&#160; <span class="pre">77.4,</span>&#160; <span class="pre">86.</span> <span class="pre">,</span> <span class="pre">103.2,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">114.7,</span> <span class="pre">129.</span> <span class="pre">,</span> <span class="pre">143.2],</span> <span class="pre">dtype=float32)</span></em><a class="headerlink" href="#mapc_sim.constants.DATA_RATES" title="Link to this definition">¶</a></dt>
-<dd><p>Data rates for IEEE 802.11ax standard, 20 MHz channel width, 1 spatial stream, and 800 ns GI (Mb/s)</p>
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">DATA_RATES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{20:</span> <span class="pre">Array([</span>&#160; <span class="pre">8.6,</span>&#160; <span class="pre">17.2,</span>&#160; <span class="pre">25.8,</span>&#160; <span class="pre">34.4,</span>&#160; <span class="pre">51.6,</span>&#160; <span class="pre">68.8,</span>&#160; <span class="pre">77.4,</span>&#160; <span class="pre">86.</span> <span class="pre">,</span> <span class="pre">103.2,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">114.7,</span> <span class="pre">129.</span> <span class="pre">,</span> <span class="pre">143.2,</span> <span class="pre">154.9,</span> <span class="pre">172.1],</span> <span class="pre">dtype=float32),</span> <span class="pre">40:</span> <span class="pre">Array([</span> <span class="pre">17.2,</span>&#160; <span class="pre">34.4,</span>&#160; <span class="pre">51.6,</span>&#160; <span class="pre">68.8,</span> <span class="pre">103.2,</span> <span class="pre">137.6,</span> <span class="pre">154.9,</span> <span class="pre">172.1,</span> <span class="pre">206.5,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">229.4,</span> <span class="pre">258.1,</span> <span class="pre">286.8,</span> <span class="pre">309.7,</span> <span class="pre">344.1],</span> <span class="pre">dtype=float32),</span> <span class="pre">80:</span> <span class="pre">Array([</span> <span class="pre">36.</span> <span class="pre">,</span>&#160; <span class="pre">72.1,</span> <span class="pre">108.1,</span> <span class="pre">144.1,</span> <span class="pre">216.2,</span> <span class="pre">288.2,</span> <span class="pre">324.3,</span> <span class="pre">360.3,</span> <span class="pre">432.4,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">480.4,</span> <span class="pre">540.4,</span> <span class="pre">600.5,</span> <span class="pre">648.5,</span> <span class="pre">720.6],</span> <span class="pre">dtype=float32),</span> <span class="pre">160:</span> <span class="pre">Array([</span>&#160; <span class="pre">72.1,</span>&#160; <span class="pre">144.1,</span>&#160; <span class="pre">216.2,</span>&#160; <span class="pre">288.2,</span>&#160; <span class="pre">432.4,</span>&#160; <span class="pre">576.5,</span>&#160; <span class="pre">648.5,</span>&#160; <span class="pre">720.6,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">864.7,</span>&#160; <span class="pre">960.8,</span> <span class="pre">1080.9,</span> <span class="pre">1201.</span> <span class="pre">,</span> <span class="pre">1297.1,</span> <span class="pre">1441.2],</span> <span class="pre">dtype=float32)}</span></em><a class="headerlink" href="#mapc_sim.constants.DATA_RATES" title="Link to this definition">¶</a></dt>
+<dd><p>Data rates for IEEE 802.11be standard, 1 spatial stream, and 800 ns GI (Mb/s)</p>
 </dd></dl>
 
 <dl class="py data">
@@ -280,13 +281,6 @@ Otherwise, a pair of data rate and the number of transmitted frames.</p>
 </dd></dl>
 
 <dl class="py data">
-<dt class="sig sig-object py" id="mapc_sim.constants.MEAN_SNRS">
-<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">MEAN_SNRS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Array([10.613625,</span> <span class="pre">10.647249,</span> <span class="pre">10.660724,</span> <span class="pre">10.682584,</span> <span class="pre">11.151268,</span> <span class="pre">15.413201,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">16.735813,</span> <span class="pre">18.091175,</span> <span class="pre">21.80629</span> <span class="pre">,</span> <span class="pre">23.331825,</span> <span class="pre">29.788906,</span> <span class="pre">31.750235],</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">dtype=float32)</span></em><a class="headerlink" href="#mapc_sim.constants.MEAN_SNRS" title="Link to this definition">¶</a></dt>
-<dd><p>Parameters of the success probability curves - cdf of the normal distribution with standard deviation of 2
-(derived from ns-3 simulations)</p>
-</dd></dl>
-
-<dl class="py data">
 <dt class="sig sig-object py" id="mapc_sim.constants.MIN_TX_POWER">
 <span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">MIN_TX_POWER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10.0</span></em><a class="headerlink" href="#mapc_sim.constants.MIN_TX_POWER" title="Link to this definition">¶</a></dt>
 <dd><p>Physical constant (dBm)</p>
@@ -303,6 +297,13 @@ Otherwise, a pair of data rate and the number of transmitted frames.</p>
 <dt class="sig sig-object py" id="mapc_sim.constants.REFERENCE_DISTANCE">
 <span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">REFERENCE_DISTANCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#mapc_sim.constants.REFERENCE_DISTANCE" title="Link to this definition">¶</a></dt>
 <dd><p>TGax channel model parameter (m)</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.STD_SNR">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">STD_SNR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.6</span></em><a class="headerlink" href="#mapc_sim.constants.STD_SNR" title="Link to this definition">¶</a></dt>
+<dd><p>Parameters of the success probability curves - cdf of the normal distribution with standard deviation of 1.6
+(derived from ns-3 simulations with Nakagami fading)</p>
 </dd></dl>
 
 <dl class="py data">
@@ -332,21 +333,6 @@ Install it as:</p>
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wall</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transmission</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.experimental.graph.Edge.__init__" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="mapc_sim.experimental.graph.Edge.items">
-<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">set-like</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">items</span></span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Edge.items" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="mapc_sim.experimental.graph.Edge.keys">
-<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">set-like</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">keys</span></span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Edge.keys" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="mapc_sim.experimental.graph.Edge.values">
-<span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">an</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">values</span></span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Edge.values" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
@@ -356,21 +342,6 @@ Install it as:</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mapc_sim.experimental.graph.Node.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_ap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx_power</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.experimental.graph.Node.__init__" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="mapc_sim.experimental.graph.Node.items">
-<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">set-like</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">items</span></span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Node.items" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="mapc_sim.experimental.graph.Node.keys">
-<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">set-like</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">keys</span></span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Node.keys" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="mapc_sim.experimental.graph.Node.values">
-<span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">an</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">values</span></span></span><a class="headerlink" href="#mapc_sim.experimental.graph.Node.values" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -494,26 +465,20 @@ Install it as:</p>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.ENTERPRISE_WALL_LOSS"><code class="docutils literal notranslate"><span class="pre">ENTERPRISE_WALL_LOSS</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.FRAME_LEN"><code class="docutils literal notranslate"><span class="pre">FRAME_LEN</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.MAX_TX_POWER"><code class="docutils literal notranslate"><span class="pre">MAX_TX_POWER</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.MEAN_SNRS"><code class="docutils literal notranslate"><span class="pre">MEAN_SNRS</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.MIN_TX_POWER"><code class="docutils literal notranslate"><span class="pre">MIN_TX_POWER</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.NOISE_FLOOR"><code class="docutils literal notranslate"><span class="pre">NOISE_FLOOR</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.REFERENCE_DISTANCE"><code class="docutils literal notranslate"><span class="pre">REFERENCE_DISTANCE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.STD_SNR"><code class="docutils literal notranslate"><span class="pre">STD_SNR</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.TAU"><code class="docutils literal notranslate"><span class="pre">TAU</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#graph-representation">Graph representation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.experimental.graph.Edge"><code class="docutils literal notranslate"><span class="pre">Edge</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#mapc_sim.experimental.graph.Edge.__init__"><code class="docutils literal notranslate"><span class="pre">Edge.__init__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mapc_sim.experimental.graph.Edge.items"><code class="docutils literal notranslate"><span class="pre">Edge.items()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mapc_sim.experimental.graph.Edge.keys"><code class="docutils literal notranslate"><span class="pre">Edge.keys()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mapc_sim.experimental.graph.Edge.values"><code class="docutils literal notranslate"><span class="pre">Edge.values()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.experimental.graph.Node"><code class="docutils literal notranslate"><span class="pre">Node</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#mapc_sim.experimental.graph.Node.__init__"><code class="docutils literal notranslate"><span class="pre">Node.__init__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mapc_sim.experimental.graph.Node.items"><code class="docutils literal notranslate"><span class="pre">Node.items()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mapc_sim.experimental.graph.Node.keys"><code class="docutils literal notranslate"><span class="pre">Node.keys()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mapc_sim.experimental.graph.Node.values"><code class="docutils literal notranslate"><span class="pre">Node.values()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.experimental.graph.Scenario"><code class="docutils literal notranslate"><span class="pre">Scenario</span></code></a><ul>
