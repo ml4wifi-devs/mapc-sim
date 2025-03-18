@@ -1,14 +1,14 @@
-from chex import dataclass
+from dataclasses import dataclass
 from functools import reduce, partial
 from typing import Optional, Protocol
 
 import jax
 import jax.numpy as jnp
 import jraph
-import numpy as np
 from jraph import segment_max, segment_sum, segment_softmax
 
 
+@jax.tree_util.register_dataclass
 @dataclass
 class Node:
     """Node features"""
@@ -18,6 +18,7 @@ class Node:
     tx_power: jax.Array
 
 
+@jax.tree_util.register_dataclass
 @dataclass
 class Edge:
     """Edge features"""
@@ -64,11 +65,11 @@ def scenario_to_graph_tupple(scenario: Scenario) -> jraph.GraphsTuple:
         add_self_edges=False
     )
 
-    A = np.zeros((len(id), len(id)))
+    A = jnp.zeros((len(id), len(id)))
 
     for k, lv in scenario.associations.items():
         for v in lv:
-            A[k, v] = 1
+            A[k, v] = A.at[k, v].set(1)
 
     graph = g._replace(edges=Edge(
         wall=scenario.walls[g.senders, g.receivers],

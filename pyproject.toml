@@ -26,4 +26,6 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project.optional-dependencies]
-graph = ["jraph~=0.0.6.dev0", "chex"]
+graph = [
+  "jraph~=0.0.6.dev0"
+]

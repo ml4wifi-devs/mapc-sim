@@ -84,3 +84,35 @@ class SimTestCase(unittest.TestCase):
 
         print('STA 1 -> AP A and STA 4 -> AP B')
         print(data_rate_3)
+
+    def test_return_internals(self):
+        # Position of the nodes given by X and Y coordinates
+        pos = jnp.array([
+            [10., 10.],  # AP A
+            [40., 10.],  # AP B
+            [10., 20.],  # STA 1
+            [ 5., 10.],  # STA 2
+            [25., 10.],  # STA 3
+            [45., 10.]   # STA 4
+        ])
+
+        n_nodes = pos.shape[0]
+
+        tx = jnp.array([
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0]
+        ])
+        tx_power = jnp.ones(n_nodes) * DEFAULT_TX_POWER
+        sigma = DEFAULT_SIGMA
+        walls = jnp.zeros((pos.shape[0], pos.shape[0]))
+        key = jax.random.PRNGKey(42)
+
+        network_data_rate_fn = jax.jit(network_data_rate, static_argnames=('channel_width', 'return_internals'))
+        rate, int = network_data_rate_fn(key, tx, pos, None, tx_power, sigma, walls, channel_width=40, return_internals=True)
+
+        assert rate is not None
+        assert int is not None

@@ -1,4 +1,5 @@
-from typing import Callable, Optional, Union
+from dataclasses import dataclass
+from typing import Callable
 
 import jax
 import jax.numpy as jnp
@@ -10,17 +11,29 @@ from mapc_sim.utils import logsumexp_db, default_path_loss
 tfd = tfp.distributions
 
 
+@jax.tree_util.register_dataclass
+@dataclass
+class Internals:
+    ampdu_size: jax.Array
+    average_data_rate: jax.Array
+    frames_transmitted: jax.Array
+    mcs: jax.Array
+    signal_power: jax.Array
+    sinr: jax.Array
+
+
 def network_data_rate(
         key: jax.random.PRNGKey,
         tx: jax.Array,
         pos: jax.Array,
-        mcs: Optional[jax.Array],
+        mcs: jax.Array | None,
         tx_power: jax.Array,
         sigma: float,
         walls: jax.Array,
-        return_sample: bool = False,
+        channel_width: int = 20,
+        return_internals: bool = False,
         path_loss_fn: Callable = default_path_loss
-) -> Union[float, tuple]:
+) -> float | tuple[float, Internals]:
     r"""
     Calculates the aggregated effective data rate based on the nodes' positions, MCS, and tx power.
     Channel is modeled using TGax channel model with additive white Gaussian noise. Effective
@@ -43,7 +56,7 @@ def network_data_rate(
         If node i is transmitting to node j, then `tx[i, j] = 1`, otherwise `tx[i, j] = 0`.
     pos: Array
         Two dimensional array of node positions. Each row corresponds to X and Y coordinates of a node.
-    mcs: Array
+    mcs: Array | None
         Modulation and coding scheme of the nodes. Each entry corresponds to MCS of the transmitting node.
         If MCS is set to None, the simulator will select the best MCS greedily.
     tx_power: Array
@@ -53,8 +66,10 @@ def network_data_rate(
     walls: Array
         Adjacency matrix of walls. If node i is separated from node j by a wall,
         then `walls[i, j] = 1`, otherwise `walls[i, j] = 0`.
-    return_sample: bool
-        A flag indicating whether the simulator returns raw number of transmitted frames.
+    channel_width: int
+        Channel width in MHz.
+    return_internals: bool
+        A flag indicating whether the simulator returns additional information about the simulation results.
     path_loss_fn: Callable
         A function that calculates the path loss between two nodes. The function signature should be
         `path_loss_fn(distance: Array, walls: Array) -> Array`, where `distance` is the matrix of distances
@@ -63,7 +78,7 @@ def network_data_rate(
 
     Returns
     -------
-    float | tuple
+    float | tuple[float, Internals]
         Aggregated effective data rate in Mb/s if ``return_sample`` is ``False``.
         Otherwise, a pair of data rate and the number of transmitted frames.
     """
@@ -81,22 +96,30 @@ def network_data_rate(
     interference = jax.vmap(logsumexp_db, in_axes=(1, 1))(a, b)
 
     sinr = signal_power - interference
-    sinr = sinr + tfd.Normal(loc=jnp.zeros_like(signal_power), scale=sigma).sample(seed=normal_key)
+    sinr = sinr + tfd.Normal(jnp.zeros_like(signal_power), sigma).sample(seed=normal_key)
     sinr = (sinr * tx).sum(axis=1)
 
     if mcs is None:
-        expected_data_rate = DATA_RATES[:, None] * tfd.Normal(loc=MEAN_SNRS[:, None], scale=2.).cdf(sinr)
+        expected_data_rate = DATA_RATES[channel_width][:, None] * tfd.Normal(MEAN_SNRS[channel_width][:, None], STD_SNR).cdf(sinr)
         mcs = jnp.argmax(expected_data_rate, axis=0)
 
-    sdist = tfd.Normal(loc=MEAN_SNRS[mcs], scale=2.)
+    sdist = tfd.Normal(MEAN_SNRS[channel_width][mcs], STD_SNR)
     logit_success_prob = sdist.log_cdf(sinr) - sdist.log_survival_function(sinr)
     logit_success_prob = jnp.where(sinr > 0, logit_success_prob, -jnp.inf)
 
-    n = jnp.round(DATA_RATES[mcs] * 1e6 * TAU / FRAME_LEN)
-    frames_transmitted = tfd.Binomial(total_count=n, logits=logit_success_prob).sample(seed=binomial_key)
+    n = jnp.round(DATA_RATES[channel_width][mcs] * 1e6 * TAU / FRAME_LEN)
+    frames_transmitted = tfd.Binomial(n, logit_success_prob).sample(seed=binomial_key)
     average_data_rate = FRAME_LEN * (frames_transmitted / TAU)
+    total_data_rate = average_data_rate.sum() / float(1e6)
 
-    if return_sample:
-        return average_data_rate.sum() / float(1e6), frames_transmitted
-    else:
-        return average_data_rate.sum() / float(1e6)
+    if return_internals:
+        return total_data_rate, Internals(
+            ampdu_size=jnp.where(sinr > 0, n, 0),
+            average_data_rate=average_data_rate,
+            frames_transmitted=frames_transmitted,
+            mcs=mcs,
+            signal_power=signal_power,
+            sinr=sinr
+        )
+
+    return total_data_rate

@@ -4,7 +4,7 @@
 spatial reuse (C-SR). It provides a framework for modeling and analyzing the performance of wireless networks under 
 various configurations and environmental conditions. A detailed description can be found in:
 
-- Maksymilian Wojnar, Wojciech Ciezobka, Katarzyna Kosek-Szott, Krzysztof Rusek, Szymon Szott, David Nunez, and Boris Bellalta. "IEEE 802.11bn Multi-AP Coordinated Spatial Reuse with Hierarchical Multi-Armed Bandits", 2025.
+- Maksymilian Wojnar, Wojciech Ciezobka, Katarzyna Kosek-Szott, Krzysztof Rusek, Szymon Szott, David Nunez, and Boris Bellalta. "IEEE 802.11bn Multi-AP Coordinated Spatial Reuse with Hierarchical Multi-Armed Bandits", IEEE Communications Letters, 2025.
 - Maksymilian Wojnar, Wojciech Ciężobka, Artur Tomaszewski, Piotr Chołda, Krzysztof Rusek, Katarzyna Kosek-Szott, Jetmir Haxhibeqiri, Jeroen Hoebeke, Boris Bellalta, Anatolij Zubow, Falko Dressler, and Szymon Szott. "Coordinated Spatial Reuse Scheduling With Machine Learning in IEEE 802.11 MAPC Networks", 2025.
 
 ## Features
@@ -200,7 +200,12 @@ For a detailed description of the tool, you may also refer to:
 ```
 @article{wojnar2025ieee,
   author={Wojnar, Maksymilian and Ciezobka, Wojciech and Kosek-Szott, Katarzyna and Rusek, Krzysztof and Szott, Szymon and Nunez, David and Bellalta, Boris},
-  title={{IEEE 802.11bn Multi-AP Coordinated Spatial Reuse with Hierarchical Multi-Armed Bandits}},
-  year={2025}, 
+  journal={IEEE Communications Letters}, 
+  title={{IEEE 802.11bn Multi-AP Coordinated Spatial Reuse With Hierarchical Multi-Armed Bandits}}, 
+  year={2025},
+  volume={29},
+  number={3},
+  pages={428-432},
+  doi={10.1109/LCOMM.2024.3521079}
 }
 ```
