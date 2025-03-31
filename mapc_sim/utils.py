@@ -38,7 +38,7 @@ def tgax_path_loss(distance: jax.Array, walls: jax.Array, breaking_point: jax.Ar
 
 residential_tgax_path_loss = partial(tgax_path_loss, breaking_point=RESIDENTIAL_BREAKING_POINT, wall_loss=RESIDENTIAL_WALL_LOSS)
 enterprise_tgax_path_loss = partial(tgax_path_loss, breaking_point=ENTERPRISE_BREAKING_POINT, wall_loss=ENTERPRISE_WALL_LOSS)
-default_path_loss = residential_tgax_path_loss
+default_path_loss = enterprise_tgax_path_loss
 
 
 def logsumexp_db(a: jax.Array, b: jax.Array) -> jax.Array:

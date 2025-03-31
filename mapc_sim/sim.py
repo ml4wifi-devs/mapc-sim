@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from chex import dataclass
 from typing import Callable
 
 import jax
@@ -11,7 +11,6 @@ from mapc_sim.utils import logsumexp_db, default_path_loss
 tfd = tfp.distributions
 
 
-@jax.tree_util.register_dataclass
 @dataclass
 class Internals:
     ampdu_size: jax.Array
