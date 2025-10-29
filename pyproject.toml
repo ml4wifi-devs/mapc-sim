@@ -17,14 +17,16 @@ authors = [
 
 requires-python = ">=3.12"
 dependencies = [
-  "chex~=0.1.88",
-  "jax~=0.4.38",
-  "tensorflow-probability[jax]~=0.25.0"
+  "jax~=0.8.0",
+  "tfp-nightly[jax]"
 ]
 
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["mapc_sim"]
 
 [project.optional-dependencies]
 graph = [
