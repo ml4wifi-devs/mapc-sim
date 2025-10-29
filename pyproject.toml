@@ -19,7 +19,7 @@ requires-python = ">=3.12"
 dependencies = [
   "chex>=0.1.88",
   "jax>=0.4.38",
-  "tensorflow-probability[jax]"
+  "tfp-nightly[jax]"
 ]
 
 [build-system]
