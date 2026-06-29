@@ -37,7 +37,7 @@
 <h1>Sim<a class="headerlink" href="#sim" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="mapc_sim.sim.network_data_rate">
-<span class="sig-prename descclassname"><span class="pre">mapc_sim.sim.</span></span><span class="sig-name descname"><span class="pre">network_data_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx_power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_width=20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_internals=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_loss_fn=functools.partial(&lt;function</span> <span class="pre">tgax_path_loss&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaking_point=10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wall_loss=7.0)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.sim.network_data_rate" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.sim.</span></span><span class="sig-name descname"><span class="pre">network_data_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx_power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_width=20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_internals=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_loss_fn=functools.partial(&lt;function</span> <span class="pre">tgax_path_loss&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaking_point=10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wall_loss=7.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nakagami_m=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.sim.network_data_rate" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates the aggregated effective data rate based on the nodes’ positions, MCS, and tx power.
 Channel is modeled using TGax channel model with additive white Gaussian noise. Effective
 data rate is calculated as the sum of data rates of all successful transmissions. Success of
@@ -68,6 +68,16 @@ then <cite>walls[i, j] = 1</cite>, otherwise <cite>walls[i, j] = 0</cite>.</p></
 <cite>path_loss_fn(distance: Array, walls: Array) -&gt; Array</cite>, where <cite>distance</cite> is the matrix of distances
 between nodes and <cite>walls</cite> is the adjacency matrix of walls. By default, the simulator uses the
 residential TGax path loss model.</p></li>
+<li><p><strong>nakagami_m</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span></code>) – <p>Nakagami-m shape parameter for multipath fading. When set, each TX-RX link (including
+interferers) receives an independent Gamma-distributed power fading factor with mean 1 and
+variance 1/m, matching ns-3’s NakagamiPropagationLossModel. <code class="docutils literal notranslate"><span class="pre">m=1</span></code> reduces to Rayleigh
+fading; larger m means less fading depth. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code> (no explicit fading).</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Enabling <code class="docutils literal notranslate"><span class="pre">nakagami_m</span></code> alongside the default <code class="docutils literal notranslate"><span class="pre">sigma</span></code>. For physical accuracy,
+recalibrate <code class="docutils literal notranslate"><span class="pre">sigma</span></code> toward 0 when Nakagami fading is enabled.</p>
+</div>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -168,6 +178,32 @@ Otherwise, a pair of data rate and the number of transmitted frames.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="mapc_sim.utils.nakagami_fading_db">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.utils.</span></span><span class="sig-name descname"><span class="pre">nakagami_fading_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.utils.nakagami_fading_db" title="Link to this definition">¶</a></dt>
+<dd><p>Samples Nakagami-m fading loss in dB for a matrix of wireless links.</p>
+<p>The fading factor <span class="math notranslate nohighlight">\(g \sim \text{Gamma}(m, 1/m)\)</span> has mean 1 and variance <span class="math notranslate nohighlight">\(1/m\)</span>,
+matching ns-3’s <code class="docutils literal notranslate"><span class="pre">NakagamiPropagationLossModel</span></code> parameterization. Mean received power is
+preserved in linear scale; in dB the distribution is left-skewed (negative mean).</p>
+<p>Special cases: <span class="math notranslate nohighlight">\(m = 1\)</span> reduces to Rayleigh fading (exponential power distribution);
+large <span class="math notranslate nohighlight">\(m\)</span> approaches no fading (<span class="math notranslate nohighlight">\(g \to 1\)</span>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">PRNGKey</span></code>) – JAX random key.</p></li>
+<li><p><strong>m</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Nakagami shape parameter (<span class="math notranslate nohighlight">\(m \geq 0.5\)</span>). Higher values mean less fading depth.</p></li>
+<li><p><strong>shape</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>) – Output shape, typically <code class="docutils literal notranslate"><span class="pre">signal_power.shape</span></code> i.e. <code class="docutils literal notranslate"><span class="pre">(n_tx,</span> <span class="pre">n_rx)</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fading loss in dB (negative values attenuate the signal).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="mapc_sim.utils.residential_tgax_path_loss">
 <span class="sig-prename descclassname"><span class="pre">mapc_sim.utils.</span></span><span class="sig-name descname"><span class="pre">residential_tgax_path_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walls</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaking_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wall_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapc_sim.utils.residential_tgax_path_loss" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates the path loss according to the TGax channel model <a href="#id11"><span class="problematic" id="id5">[1]_</span></a>.</p>
@@ -239,6 +275,20 @@ Otherwise, a pair of data rate and the number of transmitted frames.</p>
 <dt class="sig sig-object py" id="mapc_sim.constants.DATA_RATES">
 <span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">DATA_RATES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{20:</span> <span class="pre">Array([</span>&#160; <span class="pre">8.6,</span>&#160; <span class="pre">17.2,</span>&#160; <span class="pre">25.8,</span>&#160; <span class="pre">34.4,</span>&#160; <span class="pre">51.6,</span>&#160; <span class="pre">68.8,</span>&#160; <span class="pre">77.4,</span>&#160; <span class="pre">86.</span> <span class="pre">,</span> <span class="pre">103.2,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">114.7,</span> <span class="pre">129.</span> <span class="pre">,</span> <span class="pre">143.2,</span> <span class="pre">154.9,</span> <span class="pre">172.1],</span> <span class="pre">dtype=float32),</span> <span class="pre">40:</span> <span class="pre">Array([</span> <span class="pre">17.2,</span>&#160; <span class="pre">34.4,</span>&#160; <span class="pre">51.6,</span>&#160; <span class="pre">68.8,</span> <span class="pre">103.2,</span> <span class="pre">137.6,</span> <span class="pre">154.9,</span> <span class="pre">172.1,</span> <span class="pre">206.5,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">229.4,</span> <span class="pre">258.1,</span> <span class="pre">286.8,</span> <span class="pre">309.7,</span> <span class="pre">344.1],</span> <span class="pre">dtype=float32),</span> <span class="pre">80:</span> <span class="pre">Array([</span> <span class="pre">36.</span> <span class="pre">,</span>&#160; <span class="pre">72.1,</span> <span class="pre">108.1,</span> <span class="pre">144.1,</span> <span class="pre">216.2,</span> <span class="pre">288.2,</span> <span class="pre">324.3,</span> <span class="pre">360.3,</span> <span class="pre">432.4,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">480.4,</span> <span class="pre">540.4,</span> <span class="pre">600.5,</span> <span class="pre">648.5,</span> <span class="pre">720.6],</span> <span class="pre">dtype=float32),</span> <span class="pre">160:</span> <span class="pre">Array([</span>&#160; <span class="pre">72.1,</span>&#160; <span class="pre">144.1,</span>&#160; <span class="pre">216.2,</span>&#160; <span class="pre">288.2,</span>&#160; <span class="pre">432.4,</span>&#160; <span class="pre">576.5,</span>&#160; <span class="pre">648.5,</span>&#160; <span class="pre">720.6,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">864.7,</span>&#160; <span class="pre">960.8,</span> <span class="pre">1080.9,</span> <span class="pre">1201.</span> <span class="pre">,</span> <span class="pre">1297.1,</span> <span class="pre">1441.2],</span> <span class="pre">dtype=float32)}</span></em><a class="headerlink" href="#mapc_sim.constants.DATA_RATES" title="Link to this definition">¶</a></dt>
 <dd><p>Data rates for IEEE 802.11be standard, 1 spatial stream, and 800 ns GI (Mb/s)</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.DEFAULT_NAKAGAMI_M">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_NAKAGAMI_M</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.5</span></em><a class="headerlink" href="#mapc_sim.constants.DEFAULT_NAKAGAMI_M" title="Link to this definition">¶</a></dt>
+<dd><p>ns-3 NakagamiPropagationLossModel default m parameter for short distances (&lt; 80 m)
+<a class="reference external" href="https://gitlab.com/nsnam/ns-3-dev/-/blob/master/src/propagation/model/propagation-loss-model.cc">https://gitlab.com/nsnam/ns-3-dev/-/blob/master/src/propagation/model/propagation-loss-model.cc</a></p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="mapc_sim.constants.DEFAULT_NAKAGAMI_SIGMA">
+<span class="sig-prename descclassname"><span class="pre">mapc_sim.constants.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_NAKAGAMI_SIGMA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#mapc_sim.constants.DEFAULT_NAKAGAMI_SIGMA" title="Link to this definition">¶</a></dt>
+<dd><p>Recommended sigma when using explicit Nakagami fading. Set to 0 because Nakagami already
+models per-link channel variability.</p>
 </dd></dl>
 
 <dl class="py data">
@@ -452,6 +502,7 @@ Install it as:</p>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.utils.default_path_loss"><code class="docutils literal notranslate"><span class="pre">default_path_loss()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.utils.enterprise_tgax_path_loss"><code class="docutils literal notranslate"><span class="pre">enterprise_tgax_path_loss()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.utils.logsumexp_db"><code class="docutils literal notranslate"><span class="pre">logsumexp_db()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.utils.nakagami_fading_db"><code class="docutils literal notranslate"><span class="pre">nakagami_fading_db()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.utils.residential_tgax_path_loss"><code class="docutils literal notranslate"><span class="pre">residential_tgax_path_loss()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.utils.tgax_path_loss"><code class="docutils literal notranslate"><span class="pre">tgax_path_loss()</span></code></a></li>
 </ul>
@@ -459,6 +510,8 @@ Install it as:</p>
 <li class="toctree-l1"><a class="reference internal" href="#module-mapc_sim.constants">Constants</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.CENTRAL_FREQUENCY"><code class="docutils literal notranslate"><span class="pre">CENTRAL_FREQUENCY</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.DATA_RATES"><code class="docutils literal notranslate"><span class="pre">DATA_RATES</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.DEFAULT_NAKAGAMI_M"><code class="docutils literal notranslate"><span class="pre">DEFAULT_NAKAGAMI_M</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.DEFAULT_NAKAGAMI_SIGMA"><code class="docutils literal notranslate"><span class="pre">DEFAULT_NAKAGAMI_SIGMA</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.DEFAULT_SIGMA"><code class="docutils literal notranslate"><span class="pre">DEFAULT_SIGMA</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.DEFAULT_TX_POWER"><code class="docutils literal notranslate"><span class="pre">DEFAULT_TX_POWER</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapc_sim.constants.ENTERPRISE_BREAKING_POINT"><code class="docutils literal notranslate"><span class="pre">ENTERPRISE_BREAKING_POINT</span></code></a></li>
@@ -513,7 +566,7 @@ Install it as:</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &#169;2025, Maksymilian Wojnar,Wojciech Ciężobka,Katarzyna Kosek-Szott,Krzysztof Rusek,Szymon Szott.
+      &#169;2026, Maksymilian Wojnar,Wojciech Ciężobka,Katarzyna Kosek-Szott,Krzysztof Rusek,Szymon Szott.
       
       |
       <a href="_sources/api.rst.txt"
