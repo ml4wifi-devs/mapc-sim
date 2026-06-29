@@ -41,6 +41,35 @@ enterprise_tgax_path_loss = partial(tgax_path_loss, breaking_point=ENTERPRISE_BR
 default_path_loss = enterprise_tgax_path_loss
 
 
+def nakagami_fading_db(key: jax.random.PRNGKey, m: float, shape: tuple) -> jax.Array:
+    r"""
+    Samples Nakagami-m fading loss in dB for a matrix of wireless links.
+
+    The fading factor :math:`g \sim \text{Gamma}(m, 1/m)` has mean 1 and variance :math:`1/m`,
+    matching ns-3's ``NakagamiPropagationLossModel`` parameterization. Mean received power is
+    preserved in linear scale; in dB the distribution is left-skewed (negative mean).
+
+    Special cases: :math:`m = 1` reduces to Rayleigh fading (exponential power distribution);
+    large :math:`m` approaches no fading (:math:`g \to 1`).
+
+    Parameters
+    ----------
+    key: PRNGKey
+        JAX random key.
+    m: float
+        Nakagami shape parameter (:math:`m \geq 0.5`). Higher values mean less fading depth.
+    shape: tuple
+        Output shape, typically ``signal_power.shape`` i.e. ``(n_tx, n_rx)``.
+
+    Returns
+    -------
+    Array
+        Fading loss in dB (negative values attenuate the signal).
+    """
+    g = jax.random.gamma(key, a=m, shape=shape) / m
+    return 10.0 * jnp.log10(g)
+
+
 def logsumexp_db(a: jax.Array, b: jax.Array) -> jax.Array:
     r"""
     Computes :func:`jax.nn.logsumexp` for dB i.e. :math:`10 * \log_{10}(\sum_i b_i 10^{a_i/10})`

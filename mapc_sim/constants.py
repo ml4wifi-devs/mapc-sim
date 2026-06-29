@@ -16,8 +16,16 @@ r"""Physical constant (dBm)
 https://www.nsnam.org/docs/models/html/wifi-testing.html#packet-error-rate-performance"""
 
 DEFAULT_SIGMA = 2.
-r"""Simulation parameter 
+r"""Simulation parameter
 https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=908165"""
+
+DEFAULT_NAKAGAMI_M = 1.5
+r"""ns-3 NakagamiPropagationLossModel default m parameter for short distances (< 80 m)
+https://gitlab.com/nsnam/ns-3-dev/-/blob/master/src/propagation/model/propagation-loss-model.cc"""
+
+DEFAULT_NAKAGAMI_SIGMA = 0.
+r"""Recommended sigma when using explicit Nakagami fading. Set to 0 because Nakagami already
+models per-link channel variability."""
 
 CENTRAL_FREQUENCY = 5.160
 r"""Simulation parameter (GHz) 

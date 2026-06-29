@@ -6,7 +6,7 @@ import jax.numpy as jnp
 import tensorflow_probability.substrates.jax as tfp
 
 from mapc_sim.constants import *
-from mapc_sim.utils import logsumexp_db, default_path_loss
+from mapc_sim.utils import logsumexp_db, nakagami_fading_db, default_path_loss
 
 tfd = tfp.distributions
 
@@ -31,7 +31,8 @@ def network_data_rate(
         walls: jax.Array,
         channel_width: int = 20,
         return_internals: bool = False,
-        path_loss_fn: Callable = default_path_loss
+        path_loss_fn: Callable = default_path_loss,
+        nakagami_m: float | None = None
 ) -> float | tuple[float, Internals]:
     r"""
     Calculates the aggregated effective data rate based on the nodes' positions, MCS, and tx power.
@@ -74,6 +75,16 @@ def network_data_rate(
         `path_loss_fn(distance: Array, walls: Array) -> Array`, where `distance` is the matrix of distances
         between nodes and `walls` is the adjacency matrix of walls. By default, the simulator uses the
         residential TGax path loss model.
+    nakagami_m: float | None
+        Nakagami-m shape parameter for multipath fading. When set, each TX-RX link (including
+        interferers) receives an independent Gamma-distributed power fading factor with mean 1 and
+        variance 1/m, matching ns-3's NakagamiPropagationLossModel. ``m=1`` reduces to Rayleigh
+        fading; larger m means less fading depth. Defaults to ``None`` (no explicit fading).
+
+        .. warning::
+
+            Enabling ``nakagami_m`` alongside the default ``sigma``. For physical accuracy,
+            recalibrate ``sigma`` toward 0 when Nakagami fading is enabled.
 
     Returns
     -------
@@ -82,12 +93,15 @@ def network_data_rate(
         Otherwise, a pair of data rate and the number of transmitted frames.
     """
 
-    normal_key, binomial_key = jax.random.split(key)
+    nakagami_key, normal_key, binomial_key = jax.random.split(key, 3)
 
     distance = jnp.sqrt(jnp.sum((pos[:, None, :] - pos[None, ...]) ** 2, axis=-1))
     distance = jnp.clip(distance, REFERENCE_DISTANCE, None)
 
     signal_power = tx_power[:, None] - path_loss_fn(distance, walls)
+
+    if nakagami_m is not None:
+        signal_power = signal_power + nakagami_fading_db(nakagami_key, nakagami_m, signal_power.shape)
 
     interference_matrix = jnp.ones_like(tx) * tx.sum(axis=0) * tx.sum(axis=1, keepdims=True) * (1 - tx)
     a = jnp.concatenate([signal_power, jnp.full((1, signal_power.shape[1]), fill_value=NOISE_FLOOR)], axis=0)
