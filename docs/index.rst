@@ -27,6 +27,11 @@ Features
    model for realistic simulation in enterprise scenarios. The simulator
    also supports the effects of wall attenuation and random noise in the
    environment.
+-  **Monte Carlo walls** (experimental): Obstacles can be described
+   geometrically as rectangles with a given attenuation per meter. The
+   attenuation of a link is estimated by sampling points uniformly along it and
+   counting how many fall inside a wall, which also provides a physically
+   motivated fading model. See :doc:`walls`.
 -  **JAX JIT compilation**: The simulator is written in JAX, which enables
    just-in-time (JIT) compilation and hardware acceleration.
 -  **Reproducibility**: The simulator uses JAX's pseudo random number
@@ -223,6 +228,7 @@ Additional Notes
    :caption: Contents:
 
    api
+   walls
 
 
 

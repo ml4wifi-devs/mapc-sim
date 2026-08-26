@@ -13,6 +13,9 @@ nodes, variable transmission power, node positions, and modulation and coding sc
 effective data rate.
 - **TGax channel model**: The simulator incorporates the TGax channel model for realistic simulation in enterprise scenarios. The 
 simulator also supports the effects of wall attenuation and random noise in the environment.
+- **Monte Carlo walls** (experimental): Obstacles can be described geometrically as rectangles with a given attenuation per meter.
+The attenuation of a link is estimated by sampling points uniformly along it and counting how many fall inside a wall, which also
+provides a physically motivated fading model. See the [documentation](https://ml4wifi-devs.github.io/mapc-sim/walls.html).
 - **JAX JIT compilation**: The simulator is written in JAX, which enables just-in-time (JIT) compilation and hardware acceleration.
 - **Reproducibility**: The simulator uses JAX's pseudo random number generator (PRNG) to generate random numbers. This ensures that the
 simulator is fully reproducible and you will get the same results for the same input parameters.
