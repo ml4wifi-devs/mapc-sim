@@ -32,13 +32,13 @@ antenna of node :math:`i` in the direction of node :math:`j`. The second term is
 computed by :func:`link_gain`.
 """
 
-import chex
+import jax
 import jax.numpy as jnp
 
 __all__ = ['bearing', 'isotropic', 'sector_max_gain', 'sector', 'link_gain']
 
 
-def bearing(pos: chex.Array) -> chex.Array:
+def bearing(pos: jax.Array) -> jax.Array:
     r"""
     Direction from each node to each other node.
 
@@ -58,7 +58,7 @@ def bearing(pos: chex.Array) -> chex.Array:
     return jnp.rad2deg(jnp.arctan2(delta[..., 1], delta[..., 0]))
 
 
-def isotropic(pos: chex.Array, max_gain: chex.Numeric = 0.) -> chex.Array:
+def isotropic(pos: jax.Array, max_gain: float | jax.Array = 0.) -> jax.Array:
     r"""
     Gain matrix of an isotropic antenna (dBi).
 
@@ -79,7 +79,7 @@ def isotropic(pos: chex.Array, max_gain: chex.Numeric = 0.) -> chex.Array:
     return jnp.full((n, n), max_gain, dtype=float)
 
 
-def sector_max_gain(beamwidth: chex.Numeric) -> chex.Array:
+def sector_max_gain(beamwidth: float | jax.Array) -> jax.Array:
     r"""
     Peak gain (dBi) of an ideal antenna radiating uniformly within ``beamwidth`` in
     the azimuth plane, :math:`G_{\max} = 10 \log_{10} (360 / \theta_{3\mathrm{dB}})`.
@@ -103,12 +103,12 @@ def sector_max_gain(beamwidth: chex.Numeric) -> chex.Array:
 
 
 def sector(
-        pos: chex.Array,
-        boresight: chex.Array,
-        beamwidth: chex.Numeric = 65.,
-        max_gain: chex.Numeric = None,
-        front_back_ratio: chex.Numeric = 20.
-) -> chex.Array:
+        pos: jax.Array,
+        boresight: jax.Array,
+        beamwidth: float | jax.Array = 65.,
+        max_gain: float | jax.Array | None = None,
+        front_back_ratio: float | jax.Array = 20.
+) -> jax.Array:
     r"""
     Gain matrix (dBi) of a sectored antenna with the parabolic (in dB) pattern of the
     3GPP/TGax models:
@@ -151,7 +151,7 @@ def sector(
     return max_gain - jnp.minimum(12. * (angle / beamwidth) ** 2, front_back_ratio)
 
 
-def link_gain(gain: chex.Array) -> chex.Array:
+def link_gain(gain: jax.Array) -> jax.Array:
     r"""
     Total gain of each link, i.e. the sum of the gains of the transmitting and the
     receiving antenna, :math:`G_{ij} + G_{ji}`.

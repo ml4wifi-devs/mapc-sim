@@ -54,9 +54,9 @@ correlated in the way real shadowing is: two nearby links see nearly the same
 obstacle geometry).
 """
 
+from dataclasses import dataclass
 from typing import Optional, Sequence, TYPE_CHECKING
 
-import chex
 import jax
 import jax.numpy as jnp
 
@@ -66,7 +66,8 @@ if TYPE_CHECKING:
 __all__ = ['Wall', 'rotation_matrix_2d', 'stack', 'free_space', 'wall_attenuation', 'attenuation_std', 'plot_walls']
 
 
-@chex.dataclass
+@jax.tree_util.register_dataclass
+@dataclass
 class Wall:
     r"""
     A rectangular obstacle. Registered as a JAX pytree, so it can be passed
@@ -86,13 +87,13 @@ class Wall:
         Attenuation coefficient of the material (dB/m).
     """
 
-    xy: chex.Array
-    wh: chex.Array
-    rot: chex.Array
-    attenuation: chex.Array
+    xy: jax.Array
+    wh: jax.Array
+    rot: jax.Array
+    attenuation: jax.Array
 
     @classmethod
-    def create(cls, xy: chex.Array, wh: chex.Array, attenuation: chex.Numeric, angle: chex.Numeric = 0.) -> 'Wall':
+    def create(cls, xy: jax.Array, wh: jax.Array, attenuation: float | jax.Array, angle: float | jax.Array = 0.) -> 'Wall':
         r"""
         Creates a wall from its corner, size, attenuation, and rotation angle.
 
@@ -120,7 +121,7 @@ class Wall:
             attenuation=jnp.asarray(attenuation, dtype=float)
         )
 
-    def contains(self, p: chex.Array) -> chex.Array:
+    def contains(self, p: jax.Array) -> jax.Array:
         r"""
         Checks whether a point lies inside the rectangle.
 
@@ -139,7 +140,7 @@ class Wall:
         return jnp.logical_and(jnp.all(local >= 0.), jnp.all(local <= self.wh))
 
 
-def rotation_matrix_2d(angle: chex.Numeric) -> chex.Array:
+def rotation_matrix_2d(angle: float | jax.Array) -> jax.Array:
     r"""
     Counterclockwise rotation matrix.
 
@@ -179,7 +180,7 @@ def stack(walls: Sequence[Wall]) -> Wall:
     return jax.tree_util.tree_map(lambda *leaves: jnp.stack(leaves), *walls)
 
 
-def _pair_keys(key: chex.PRNGKey, n: int) -> chex.PRNGKey:
+def _pair_keys(key: jax.Array, n: int) -> jax.Array:
     r"""Builds a symmetric ``(n, n)`` matrix of keys, one per unordered pair of nodes."""
 
     idx = jnp.arange(n)
@@ -188,7 +189,7 @@ def _pair_keys(key: chex.PRNGKey, n: int) -> chex.PRNGKey:
     return jax.vmap(jax.vmap(jax.random.fold_in, in_axes=(None, 0)), in_axes=(None, 0))(key, lo * n + hi)
 
 
-def _pair_hits(key: chex.PRNGKey, a: chex.Array, b: chex.Array, walls: Wall, n_samples: int) -> chex.Array:
+def _pair_hits(key: jax.Array, a: jax.Array, b: jax.Array, walls: Wall, n_samples: int) -> jax.Array:
     r"""Fraction of the uniformly sampled points of the segment ``ab`` inside each wall."""
 
     t = jax.random.uniform(key, shape=(n_samples, 1))
@@ -197,7 +198,7 @@ def _pair_hits(key: chex.PRNGKey, a: chex.Array, b: chex.Array, walls: Wall, n_s
     return inside.mean(axis=0)
 
 
-def _hit_matrix(key: chex.PRNGKey, pos: chex.Array, walls: Wall, n_samples: int) -> chex.Array:
+def _hit_matrix(key: jax.Array, pos: jax.Array, walls: Wall, n_samples: int) -> jax.Array:
     r"""``(n, n, n_walls)`` matrix of the estimated fractions of the links inside each wall."""
 
     n = pos.shape[0]
@@ -209,7 +210,7 @@ def _hit_matrix(key: chex.PRNGKey, pos: chex.Array, walls: Wall, n_samples: int)
     return fn(_pair_keys(key, n), pos[lo], pos[hi], walls, n_samples)
 
 
-def free_space(pos: chex.Array) -> chex.Array:
+def free_space(pos: jax.Array) -> jax.Array:
     r"""
     Attenuation matrix of an environment without obstacles.
 
@@ -228,7 +229,7 @@ def free_space(pos: chex.Array) -> chex.Array:
     return jnp.zeros((n, n))
 
 
-def wall_attenuation(key: chex.PRNGKey, pos: chex.Array, walls: Wall, n_samples: int = 256) -> chex.Array:
+def wall_attenuation(key: jax.Array, pos: jax.Array, walls: Wall, n_samples: int = 256) -> jax.Array:
     r"""
     Monte Carlo estimate of the attenuation (dB) caused by walls for every pair of nodes.
 
@@ -262,7 +263,7 @@ def wall_attenuation(key: chex.PRNGKey, pos: chex.Array, walls: Wall, n_samples:
     return distance * (hits * walls.attenuation).sum(axis=-1)
 
 
-def attenuation_std(key: chex.PRNGKey, pos: chex.Array, walls: Wall, n_samples: int = 256) -> chex.Array:
+def attenuation_std(key: jax.Array, pos: jax.Array, walls: Wall, n_samples: int = 256) -> jax.Array:
     r"""
     Standard deviation of the :func:`wall_attenuation` estimator (dB).
 

@@ -108,12 +108,21 @@ Obstacles can be drawn with :func:`~mapc_sim.experimental.walls.plot_walls`:
     ax.scatter(pos[:, 0], pos[:, 1])
     plt.show()
 
-Since :class:`~mapc_sim.experimental.walls.Wall` is a JAX pytree, the whole
-environment can be passed through ``jit`` and ``vmap``, and the attenuation matrix
-is differentiable with respect to the attenuation coefficients and the positions of
-the obstacles (the geometry enters through a hard indicator, so the gradient with
-respect to the *size and position* of a wall is zero almost everywhere -- only the
-attenuation coefficients receive a useful gradient).
+:class:`~mapc_sim.experimental.walls.Wall` is a standard dataclass registered as a
+JAX pytree (:func:`jax.tree_util.register_dataclass`), so obstacles are modified
+with :func:`dataclasses.replace`:
+
+.. code-block:: python
+
+    from dataclasses import replace
+
+    thicker = replace(wall, wh=wall.wh.at[0].set(0.5))
+
+A stacked environment is a pytree too, so it can be passed through ``jit`` and
+``vmap``, and the attenuation matrix is differentiable with respect to the
+attenuation coefficients (the geometry enters through a hard indicator, so the
+gradient with respect to the *size and position* of a wall is zero almost
+everywhere).
 
 .. _sampling-noise-fading:
 

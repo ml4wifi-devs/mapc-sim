@@ -1,4 +1,5 @@
 import unittest
+from dataclasses import replace
 
 import jax
 import jax.numpy as jnp
@@ -83,7 +84,7 @@ class WallAttenuationTestCase(unittest.TestCase):
 
         # differentiable w.r.t. the attenuation of the material
         grad = jax.grad(lambda a: wall_attenuation(
-            self.key, self.pos, self.walls.replace(attenuation=a), n_samples=4096
+            self.key, self.pos, replace(self.walls, attenuation=a), n_samples=4096
         )[0, 1])(self.walls.attenuation)
         self.assertAlmostEqual(float(grad[0]), 1., delta=0.1)
 
