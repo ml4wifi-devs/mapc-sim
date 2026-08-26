@@ -1,6 +1,6 @@
 [project]
 name = "mapc_sim"
-version = "0.1.5"
+version = "0.2.1"
 description = "IEEE 802.11 MAPC (C-SR) simulator"
 
 readme = "README.md"
@@ -15,13 +15,11 @@ authors = [
   {name = "Szymon Szott", email = "szymon.szott@agh.edu.pl"}
 ]
 
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 dependencies = [
-  "chex~=0.1.86",
-  "jax~=0.4.30",
-  "jaxlib~=0.4.30",
-  "matplotlib~=3.9.1",
-  "tensorflow-probability[jax]~=0.24.0"
+  "chex~=0.1.88",
+  "jax~=0.4.38",
+  "tensorflow-probability[jax]~=0.25.0"
 ]
 
 [build-system]
@@ -29,4 +27,9 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project.optional-dependencies]
-graph = ["jraph~=0.0.6.dev0"]
+graph = [
+  "jraph~=0.0.6.dev0"
+]
+viz = [
+  "matplotlib~=3.9"
+]

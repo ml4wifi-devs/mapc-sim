@@ -4,7 +4,8 @@
 spatial reuse (C-SR). It provides a framework for modeling and analyzing the performance of wireless networks under 
 various configurations and environmental conditions. A detailed description can be found in:
 
-- Maksymilian Wojnar, Wojciech Ciezobka, Katarzyna Kosek-Szott, Krzysztof Rusek, Szymon Szott, David Nunez, and Boris Bellalta. "IEEE 802.11bn Multi-AP Coordinated Spatial Reuse with Hierarchical Multi-Armed Bandits", $JOURNAL_NAME_TODO, 2024. [[TODO_PREPRINT_INSERT](https://github.com/ml4wifi-devs/mapc-mab/tree/main), [TODO_PUBLICATION_INSERT](https://github.com/ml4wifi-devs/mapc-mab/tree/main)]
+- Maksymilian Wojnar, Wojciech Ciezobka, Katarzyna Kosek-Szott, Krzysztof Rusek, Szymon Szott, David Nunez, and Boris Bellalta. "IEEE 802.11bn Multi-AP Coordinated Spatial Reuse with Hierarchical Multi-Armed Bandits", IEEE Communications Letters, 2025.
+- Maksymilian Wojnar, Wojciech Ciężobka, Artur Tomaszewski, Piotr Chołda, Krzysztof Rusek, Katarzyna Kosek-Szott, Jetmir Haxhibeqiri, Jeroen Hoebeke, Boris Bellalta, Anatolij Zubow, Falko Dressler, and Szymon Szott. "Coordinated Spatial Reuse Scheduling With Machine Learning in IEEE 802.11 MAPC Networks", 2025.
 
 ## Features
 
@@ -46,7 +47,9 @@ the effective data rate for a given network configuration. Example usage:
 ```python
 import jax
 import jax.numpy as jnp
+from mapc_sim.constants import ENTERPRISE_WALL_LOSS
 from mapc_sim.sim import network_data_rate
+from mapc_sim.utils import binary_walls
 
 # Random number generator key
 key = jax.random.PRNGKey(42)
@@ -69,21 +72,27 @@ pos = jnp.array([
 # MCS values of transmitting nodes
 mcs = jnp.array([mcs_0, mcs_1, ..., mcs_n], dtype=int)
 
+# You can also set the MCS value to None if you want to use the greedy MCS selection for all nodes
+# mcs = None
+
 # Transmission power of transmitting nodes
 tx_power = jnp.array([tx_power_0, tx_power_1, ..., tx_power_n])
 
 # Standard deviation of the white Gaussian noise
 sigma = 2.
 
-# Walls matrix - 1 if there is a wall between node k and node l, 0 otherwise
+# Additional loss (positive) and gain (negative) for each pair of nodes in dB.
+# The simplest model is a binary walls matrix - 1 if there is a wall between node k and node l,
+# 0 otherwise - scaled by the loss of a single wall
 walls = jnp.zeros((n_nodes, n_nodes))
 walls = walls.at[k_0, l_0].set(1)
 walls = walls.at[k_1, l_1].set(1)
 ...
 walls = walls.at[k_m, l_m].set(1)
+loss_gain = binary_walls(walls, ENTERPRISE_WALL_LOSS)
 
 # Calculate the effective data rate with the simulator
-data_rate = network_data_rate(key, tx, pos, mcs, tx_power, sigma, walls)
+data_rate = network_data_rate(key, tx, pos, mcs, tx_power, sigma, loss_gain)
 ```
 
 For more detailed examples, refer to the test cases in `test/test_sim.py`.
@@ -102,7 +111,7 @@ from mapc_sim.sim import network_data_rate
 # ...
 
 network_data_rate_jit = jax.jit(network_data_rate)
-data_rate = network_data_rate_jit(key, tx, pos, mcs, tx_power, sigma, walls)
+data_rate = network_data_rate_jit(key, tx, pos, mcs, tx_power, sigma, loss_gain)
 ```
 
 As the `jax.jit` transformation can be applied to any function, you can also use it to JIT-compile closures. 
@@ -115,12 +124,12 @@ import jax
 from mapc_sim.sim import network_data_rate
 
 pos = ...
-walls = ...
+loss_gain = ...
 
 network_data_rate_jit = jax.jit(partial(
     network_data_rate,
     pos=pos,
-    walls=walls,
+    loss_gain=loss_gain,
 ))
 
 # Define the remaining values
@@ -147,7 +156,7 @@ key = jax.random.PRNGKey(42)
 for _ in range(n):
     # Generate two new keys, one for the current step and one for the next splits
     key, subkey = jax.random.split(key)
-    data_rate = network_data_rate(subkey, tx, pos, mcs, tx_power, sigma, walls)
+    data_rate = network_data_rate(subkey, tx, pos, mcs, tx_power, sigma, loss_gain)
 ```
 
 ### 64-bit Floating Point Precision
@@ -184,6 +193,27 @@ to the official [JAX repository](https://jax.readthedocs.io/en/latest/).
 
 ## How to reference `mapc-sim`?
 
+If you use this repository or tool in your research, please cite the following paper:
+
 ```
-TODO
+@article{wojnar2025coordinated,
+  author={Wojnar, Maksymilian and Ciężobka, Wojciech and Tomaszewski, Artur and Chołda, Piotr and Rusek, Krzysztof and Kosek-Szott, Katarzyna and Haxhibeqiri, Jetmir and Hoebeke, Jeroen and Bellalta, Boris and Zubow, Anatolij and Dressler, Falko and Szott, Szymon},
+  title={{Coordinated Spatial Reuse Scheduling With Machine Learning in IEEE 802.11 MAPC Networks}}, 
+  year={2025},
+}
+```
+
+For a detailed description of the tool, you may also refer to:
+
+```
+@article{wojnar2025ieee,
+  author={Wojnar, Maksymilian and Ciezobka, Wojciech and Kosek-Szott, Katarzyna and Rusek, Krzysztof and Szott, Szymon and Nunez, David and Bellalta, Boris},
+  journal={IEEE Communications Letters}, 
+  title={{IEEE 802.11bn Multi-AP Coordinated Spatial Reuse With Hierarchical Multi-Armed Bandits}}, 
+  year={2025},
+  volume={29},
+  number={3},
+  pages={428-432},
+  doi={10.1109/LCOMM.2024.3521079}
+}
 ```

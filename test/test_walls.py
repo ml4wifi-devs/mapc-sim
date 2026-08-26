@@ -97,7 +97,7 @@ class WallAttenuationTestCase(unittest.TestCase):
 
         rate = network_data_rate(sim_key, tx, self.pos, mcs, tx_power, sigma=2., loss_gain=loss_gain)
         self.assertGreater(float(rate), 0.)
-        self.assertLess(float(rate), float(DATA_RATES.max()))
+        self.assertLess(float(rate), float(DATA_RATES[20].max()))
 
 
 if __name__ == '__main__':
