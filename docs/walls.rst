@@ -188,6 +188,27 @@ The correspondence is approximate and should be used with the following in mind:
   and by :math:`N`, which is shared by all links. Matching a target ``sigma``
   exactly for every link is not possible; matching it on average is.
 
+Relation to Nakagami fading
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The simulator has a second, independent source of channel randomness: the
+``nakagami_m`` argument of :func:`mapc_sim.sim.network_data_rate`, which applies a
+Gamma-distributed power fading factor to every link
+(:func:`mapc_sim.utils.nakagami_fading_db`). The two model different physics and
+compose rather than compete:
+
+* ``nakagami_m`` is **multipath (fast) fading** -- independent per link and per
+  slot, with a mean of 1 in the linear scale, and unrelated to the geometry.
+* The sampling noise of the wall estimator is **shadowing (slow) fading** -- driven
+  by the uncertainty about the obstacles the link crosses, and correlated for links
+  that share geometry.
+
+The term to watch out for is ``sigma``: it is a generic log-normal perturbation of
+the SINR which stands in for both effects. Enabling ``nakagami_m`` already
+motivates ``sigma = 0`` (cf. :const:`mapc_sim.constants.DEFAULT_NAKAGAMI_SIGMA`),
+and using the sampling noise as the shadowing term is the same argument applied to
+the second component -- otherwise the same randomness is counted twice.
+
 Choosing ``n_samples``
 ----------------------
 

@@ -43,9 +43,12 @@ class AcceptsWallsTestCase(unittest.TestCase):
         with self.assertWarns(DeprecationWarning):
             network_data_rate(self.key, *self.args, walls=self.walls)
 
-        with warnings.catch_warnings():
-            warnings.simplefilter('error', DeprecationWarning)
+        # the modern call must not warn (other libraries may, so filter by message)
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter('always')
             network_data_rate(self.key, *self.args, loss_gain=binary_walls(self.walls))
+
+        self.assertEqual([w for w in caught if '`walls` is deprecated' in str(w.message)], [])
 
     def test_both_arguments(self):
         with self.assertRaises(TypeError):
