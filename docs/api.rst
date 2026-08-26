@@ -51,3 +51,16 @@ Walls
 .. automodule:: mapc_sim.experimental.walls
     :members:
     :no-undoc-members:
+
+
+Antennas
+---------------------------------
+
+.. important::
+
+    This module is experimental and its API may change. See :doc:`antennas` for
+    a discussion of the gain convention.
+
+.. automodule:: mapc_sim.experimental.antenas
+    :members:
+    :no-undoc-members:

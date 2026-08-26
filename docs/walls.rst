@@ -90,6 +90,13 @@ Usage
 
     data_rate = network_data_rate(sim_key, tx, pos, mcs, tx_power, sigma, loss_gain)
 
+The ``loss_gain`` matrix is additive, so antenna gains are simply subtracted from
+the wall attenuation, see :doc:`antennas`:
+
+.. code-block:: python
+
+    loss_gain = wall_attenuation(walls_key, pos, walls) - link_gain(sector(pos, boresight))
+
 Obstacles can be drawn with :func:`~mapc_sim.experimental.walls.plot_walls`:
 
 .. code-block:: python
