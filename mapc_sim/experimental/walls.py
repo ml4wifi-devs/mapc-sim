@@ -54,11 +54,14 @@ correlated in the way real shadowing is: two nearby links see nearly the same
 obstacle geometry).
 """
 
-from typing import Optional, Sequence
+from typing import Optional, Sequence, TYPE_CHECKING
 
 import chex
 import jax
 import jax.numpy as jnp
+
+if TYPE_CHECKING:
+    import matplotlib
 
 __all__ = ['Wall', 'rotation_matrix_2d', 'stack', 'free_space', 'wall_attenuation', 'attenuation_std', 'plot_walls']
 
