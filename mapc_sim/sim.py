@@ -6,7 +6,7 @@ import jax.numpy as jnp
 import tensorflow_probability.substrates.jax as tfp
 
 from mapc_sim.constants import *
-from mapc_sim.utils import logsumexp_db, default_path_loss
+from mapc_sim.utils import accepts_walls, default_path_loss, logsumexp_db
 
 tfd = tfp.distributions
 
@@ -21,6 +21,7 @@ class Internals:
     sinr: jax.Array
 
 
+@accepts_walls
 def network_data_rate(
         key: jax.random.PRNGKey,
         tx: jax.Array,
@@ -69,7 +70,9 @@ def network_data_rate(
         :func:`mapc_sim.experimental.walls.wall_attenuation`, from antenna patterns with
         :func:`mapc_sim.experimental.antenas.gain`, or from a binary adjacency matrix of walls
         (the model used by the previous versions of the simulator) with
-        :func:`mapc_sim.utils.binary_walls`.
+        :func:`mapc_sim.utils.binary_walls`. For backward compatibility, a binary matrix
+        can also be passed as the ``walls`` keyword argument, optionally together with
+        ``wall_loss``, see :func:`mapc_sim.utils.accepts_walls`.
     channel_width: int
         Channel width in MHz.
     return_internals: bool

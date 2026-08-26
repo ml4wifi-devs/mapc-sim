@@ -1,4 +1,7 @@
-from functools import partial
+import inspect
+import warnings
+from functools import partial, wraps
+from typing import Callable
 
 import jax
 import jax.numpy as jnp
@@ -65,6 +68,75 @@ def binary_walls(walls: jax.Array, wall_loss: jax.Array = ENTERPRISE_WALL_LOSS) 
     """
 
     return wall_loss * walls
+
+
+def accepts_walls(fn: Callable) -> Callable:
+    r"""
+    Decorator adding a legacy ``walls`` keyword argument to a function taking a
+    ``loss_gain`` matrix.
+
+    The simulator used to describe the environment with a binary adjacency matrix of
+    walls, which it scaled internally by a fixed per-wall loss. It now takes a single
+    additive ``loss_gain`` matrix in dB (losses positive, gains negative), which is more
+    general -- it also accommodates the geometric wall model of
+    :mod:`mapc_sim.experimental.walls` and the antenna gains of
+    :mod:`mapc_sim.experimental.antenas`. This decorator keeps the old call style
+    working:
+
+    .. code-block:: python
+
+        # legacy call, equivalent to loss_gain=binary_walls(walls, ENTERPRISE_WALL_LOSS)
+        network_data_rate(key, tx, pos, mcs, tx_power, sigma, walls=walls)
+
+        # ... and with a different wall loss
+        network_data_rate(key, tx, pos, mcs, tx_power, sigma, walls=walls, wall_loss=RESIDENTIAL_WALL_LOSS)
+
+    .. important::
+
+        The legacy argument must be passed **by keyword**. A matrix passed positionally
+        is always the ``loss_gain`` matrix, since the two cannot be told apart -- under
+        ``jit`` the values are tracers, and a binary matrix is a valid ``loss_gain``
+        matrix in its own right.
+
+    Passing both ``walls`` and ``loss_gain`` raises a ``TypeError``. Using ``walls``
+    raises a ``DeprecationWarning``.
+
+    Parameters
+    ----------
+    fn: Callable
+        A function with a ``loss_gain`` parameter, e.g. :func:`mapc_sim.sim.network_data_rate`.
+
+    Returns
+    -------
+    Callable
+        The same function, additionally accepting ``walls`` and ``wall_loss`` keywords.
+    """
+
+    signature = inspect.signature(fn)
+    parameters = list(signature.parameters.values())
+    loss_gain_pos = [p.name for p in parameters].index('loss_gain')
+
+    @wraps(fn)
+    def wrapper(*args, walls: jax.Array = None, wall_loss: jax.Array = ENTERPRISE_WALL_LOSS, **kwargs):
+        if walls is None:
+            return fn(*args, **kwargs)
+
+        if len(args) > loss_gain_pos or 'loss_gain' in kwargs:
+            raise TypeError(f'{fn.__name__}() got both `walls` and `loss_gain`, pass only one of them')
+
+        warnings.warn(
+            '`walls` is deprecated, pass `loss_gain=binary_walls(walls, wall_loss)` instead',
+            DeprecationWarning, stacklevel=2
+        )
+        return fn(*args, loss_gain=binary_walls(walls, wall_loss), **kwargs)
+
+    legacy = [
+        inspect.Parameter('walls', inspect.Parameter.KEYWORD_ONLY, default=None, annotation=jax.Array),
+        inspect.Parameter('wall_loss', inspect.Parameter.KEYWORD_ONLY, default=ENTERPRISE_WALL_LOSS, annotation=jax.Array)
+    ]
+    wrapper.__signature__ = signature.replace(parameters=parameters + legacy)
+
+    return wrapper
 
 
 def logsumexp_db(a: jax.Array, b: jax.Array) -> jax.Array:

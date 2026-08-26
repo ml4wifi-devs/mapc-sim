@@ -97,6 +97,21 @@ data_rate = network_data_rate(key, tx, pos, mcs, tx_power, sigma, loss_gain)
 
 For more detailed examples, refer to the test cases in `test/test_sim.py`.
 
+#### Backward compatibility
+
+Earlier versions of the simulator took a binary `walls` matrix and scaled it internally by a fixed per-wall loss. That call
+style still works: pass `walls` (and optionally `wall_loss`) **by keyword** and the `accepts_walls` decorator converts it to
+a `loss_gain` matrix, with a `DeprecationWarning`.
+
+```python
+# legacy, equivalent to loss_gain=binary_walls(walls, ENTERPRISE_WALL_LOSS)
+data_rate = network_data_rate(key, tx, pos, mcs, tx_power, sigma, walls=walls)
+```
+
+A matrix passed positionally is always the `loss_gain` matrix -- the two cannot be told apart, since under `jit` the values
+are tracers and a binary matrix is a valid `loss_gain` matrix in its own right.
+
+
 ### JAX JIT Compilation
 
 The simulator is written in JAX, which enables just-in-time (JIT) compilation and hardware acceleration. 
