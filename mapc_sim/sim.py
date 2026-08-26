@@ -6,7 +6,7 @@ import jax.numpy as jnp
 import tensorflow_probability.substrates.jax as tfp
 
 from mapc_sim.constants import *
-from mapc_sim.utils import logsumexp_db, nakagami_fading_db, default_path_loss
+from mapc_sim.utils import accepts_walls, logsumexp_db, nakagami_fading_db, default_path_loss
 
 tfd = tfp.distributions
 
@@ -21,6 +21,7 @@ class Internals:
     sinr: jax.Array
 
 
+@accepts_walls
 def network_data_rate(
         key: jax.random.PRNGKey,
         tx: jax.Array,
@@ -28,7 +29,7 @@ def network_data_rate(
         mcs: jax.Array | None,
         tx_power: jax.Array,
         sigma: float,
-        walls: jax.Array,
+        loss_gain: jax.Array,
         channel_width: int = 20,
         return_internals: bool = False,
         path_loss_fn: Callable = default_path_loss,
@@ -63,18 +64,25 @@ def network_data_rate(
         Transmission power of the nodes. Each entry corresponds to the transmission power of the transmitting node.
     sigma: float
         Standard deviation of the additive white Gaussian noise.
-    walls: Array
-        Adjacency matrix of walls. If node i is separated from node j by a wall,
-        then `walls[i, j] = 1`, otherwise `walls[i, j] = 0`.
+    loss_gain: Array
+        Matrix of the additional loss (positive) and gain (negative) for each pair of nodes, in dB.
+        It is added to the path loss, so walls contribute a positive value and antenna gains a
+        negative one. It can be built from a geometric description of the environment with
+        :func:`mapc_sim.experimental.walls.wall_attenuation`, from antenna patterns with
+        :func:`mapc_sim.experimental.antenas.gain`, or from a binary adjacency matrix of walls
+        (the model used by the previous versions of the simulator) with
+        :func:`mapc_sim.utils.binary_walls`. For backward compatibility, a binary matrix
+        can also be passed as the ``walls`` keyword argument, optionally together with
+        ``wall_loss``, see :func:`mapc_sim.utils.accepts_walls`.
     channel_width: int
         Channel width in MHz.
     return_internals: bool
         A flag indicating whether the simulator returns additional information about the simulation results.
     path_loss_fn: Callable
         A function that calculates the path loss between two nodes. The function signature should be
-        `path_loss_fn(distance: Array, walls: Array) -> Array`, where `distance` is the matrix of distances
-        between nodes and `walls` is the adjacency matrix of walls. By default, the simulator uses the
-        residential TGax path loss model.
+        `path_loss_fn(distance: Array, loss_gain: Array) -> Array`, where `distance` is the matrix of
+        distances between nodes and `loss_gain` is the matrix of the additional loss and gain.
+        By default, the simulator uses the enterprise TGax path loss model.
     nakagami_m: float | None
         Nakagami-m shape parameter for multipath fading. When set, each TX-RX link (including
         interferers) receives an independent Gamma-distributed power fading factor with mean 1 and
@@ -89,8 +97,8 @@ def network_data_rate(
     Returns
     -------
     float | tuple[float, Internals]
-        Aggregated effective data rate in Mb/s if ``return_sample`` is ``False``.
-        Otherwise, a pair of data rate and the number of transmitted frames.
+        Aggregated effective data rate in Mb/s if ``return_internals`` is ``False``.
+        Otherwise, a pair of the data rate and the internal state of the simulation.
     """
 
     nakagami_key, normal_key, binomial_key = jax.random.split(key, 3)
@@ -98,7 +106,7 @@ def network_data_rate(
     distance = jnp.sqrt(jnp.sum((pos[:, None, :] - pos[None, ...]) ** 2, axis=-1))
     distance = jnp.clip(distance, REFERENCE_DISTANCE, None)
 
-    signal_power = tx_power[:, None] - path_loss_fn(distance, walls)
+    signal_power = tx_power[:, None] - path_loss_fn(distance, loss_gain)
 
     if nakagami_m is not None:
         signal_power = signal_power + nakagami_fading_db(nakagami_key, nakagami_m, signal_power.shape)

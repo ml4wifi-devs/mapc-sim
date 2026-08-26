@@ -26,9 +26,12 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["mapc_sim"]
+packages = ["mapc_sim", "mapc_sim.experimental"]
 
 [project.optional-dependencies]
 graph = [
   "jraph~=0.0.6.dev0"
+]
+viz = [
+  "matplotlib~=3.9"
 ]

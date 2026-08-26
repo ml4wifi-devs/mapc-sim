@@ -14,6 +14,9 @@ nodes, variable transmission power, node positions, and modulation and coding sc
 effective data rate.
 - **TGax channel model**: The simulator incorporates the TGax channel model for realistic simulation in enterprise scenarios. The 
 simulator also supports the effects of wall attenuation and random noise in the environment.
+- **Monte Carlo walls** (experimental): Obstacles can be described geometrically as rectangles with a given attenuation per meter.
+The attenuation of a link is estimated by sampling points uniformly along it and counting how many fall inside a wall, which also
+provides a physically motivated fading model. See the [documentation](https://ml4wifi-devs.github.io/mapc-sim/walls.html).
 - **JAX JIT compilation**: The simulator is written in JAX, which enables just-in-time (JIT) compilation and hardware acceleration.
 - **Reproducibility**: The simulator uses JAX's pseudo random number generator (PRNG) to generate random numbers. This ensures that the
 simulator is fully reproducible and you will get the same results for the same input parameters.
@@ -44,7 +47,9 @@ the effective data rate for a given network configuration. Example usage:
 ```python
 import jax
 import jax.numpy as jnp
+from mapc_sim.constants import ENTERPRISE_WALL_LOSS
 from mapc_sim.sim import network_data_rate
+from mapc_sim.utils import binary_walls
 
 # Random number generator key
 key = jax.random.PRNGKey(42)
@@ -76,18 +81,36 @@ tx_power = jnp.array([tx_power_0, tx_power_1, ..., tx_power_n])
 # Standard deviation of the white Gaussian noise
 sigma = 2.
 
-# Walls matrix - 1 if there is a wall between node k and node l, 0 otherwise
+# Additional loss (positive) and gain (negative) for each pair of nodes in dB.
+# The simplest model is a binary walls matrix - 1 if there is a wall between node k and node l,
+# 0 otherwise - scaled by the loss of a single wall
 walls = jnp.zeros((n_nodes, n_nodes))
 walls = walls.at[k_0, l_0].set(1)
 walls = walls.at[k_1, l_1].set(1)
 ...
 walls = walls.at[k_m, l_m].set(1)
+loss_gain = binary_walls(walls, ENTERPRISE_WALL_LOSS)
 
 # Calculate the effective data rate with the simulator
-data_rate = network_data_rate(key, tx, pos, mcs, tx_power, sigma, walls)
+data_rate = network_data_rate(key, tx, pos, mcs, tx_power, sigma, loss_gain)
 ```
 
 For more detailed examples, refer to the test cases in `test/test_sim.py`.
+
+#### Backward compatibility
+
+Earlier versions of the simulator took a binary `walls` matrix and scaled it internally by a fixed per-wall loss. That call
+style still works: pass `walls` (and optionally `wall_loss`) **by keyword** and the `accepts_walls` decorator converts it to
+a `loss_gain` matrix, with a `DeprecationWarning`.
+
+```python
+# legacy, equivalent to loss_gain=binary_walls(walls, ENTERPRISE_WALL_LOSS)
+data_rate = network_data_rate(key, tx, pos, mcs, tx_power, sigma, walls=walls)
+```
+
+A matrix passed positionally is always the `loss_gain` matrix -- the two cannot be told apart, since under `jit` the values
+are tracers and a binary matrix is a valid `loss_gain` matrix in its own right.
+
 
 ### JAX JIT Compilation
 
@@ -103,7 +126,7 @@ from mapc_sim.sim import network_data_rate
 # ...
 
 network_data_rate_jit = jax.jit(network_data_rate)
-data_rate = network_data_rate_jit(key, tx, pos, mcs, tx_power, sigma, walls)
+data_rate = network_data_rate_jit(key, tx, pos, mcs, tx_power, sigma, loss_gain)
 ```
 
 As the `jax.jit` transformation can be applied to any function, you can also use it to JIT-compile closures. 
@@ -116,12 +139,12 @@ import jax
 from mapc_sim.sim import network_data_rate
 
 pos = ...
-walls = ...
+loss_gain = ...
 
 network_data_rate_jit = jax.jit(partial(
     network_data_rate,
     pos=pos,
-    walls=walls,
+    loss_gain=loss_gain,
 ))
 
 # Define the remaining values
@@ -148,7 +171,7 @@ key = jax.random.PRNGKey(42)
 for _ in range(n):
     # Generate two new keys, one for the current step and one for the next splits
     key, subkey = jax.random.split(key)
-    data_rate = network_data_rate(subkey, tx, pos, mcs, tx_power, sigma, walls)
+    data_rate = network_data_rate(subkey, tx, pos, mcs, tx_power, sigma, loss_gain)
 ```
 
 ### 64-bit Floating Point Precision
